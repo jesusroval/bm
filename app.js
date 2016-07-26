@@ -116,7 +116,7 @@ var Player = function(param){
 			x:self.x,
 			y:self.y,
 			hp:self.hp,
-			score:self.score,
+			score:self.score
 		}	
 	}
 	
@@ -143,10 +143,11 @@ Player.onConnect = function(socket){
 			player.pressingUp = data.state;
 		else if(data.inputId === 'down')
 			player.pressingDown = data.state;
+		else if(data.inputId === 'mouseAngle')
+			player.mouseAngle = data.state;		
 		else if(data.inputId === 'attack')
 			player.pressingAttack = data.state;
-		else if(data.inputId === 'mouseAngle')
-			player.mouseAngle = data.state;
+
 	});
 	
 	socket.emit('init',{

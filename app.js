@@ -204,8 +204,8 @@ var Bullet = function(param){
 					if(shooter)
 						shooter.score += 1;
 					p.hp = p.hpMax;
-					p.x = Math.random() * 500;
-					p.y = Math.random() * 500;					
+					p.x = Math.random() * 680;
+					p.y = Math.random() * 400;					
 				}
 				self.toRemove = true;
 			}

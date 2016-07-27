@@ -182,7 +182,7 @@
 			var p = Player.list[pack.id];
 			if(p){
 
-				mousePos(mX, mY);
+
 
 				if(pack.x !== undefined)
 					p.x = pack.x;
@@ -192,6 +192,8 @@
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
 					p.score = pack.score;
+
+				mousePos(mX, mY);
 			}
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){

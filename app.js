@@ -15,6 +15,8 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
+var charArray = [];
+
 var Entity = function(param){
 	var self = {
 		x:250,
@@ -125,6 +127,11 @@ var Player = function(param){
 	initPack.player.push(self.getInitPack());
 	return self;
 }
+
+
+///////
+
+
 Player.list = {};
 Player.onConnect = function(socket){
 	var map = 'field';
@@ -149,12 +156,19 @@ Player.onConnect = function(socket){
 			player.pressingAttack = data.state;
 
 	});
+
+
 	
+
+
 	socket.emit('init',{
-		selfId:socket.id,
 		player:Player.getAllInitPack(),
 		bullet:Bullet.getAllInitPack(),
-	})
+	});
+
+
+
+
 }
 Player.getAllInitPack = function(){
 	var players = [];
@@ -290,6 +304,7 @@ io.sockets.on('connection', function(socket){
 		isValidPassword(data,function(res){
 			if(res){
 				Player.onConnect(socket);
+
 				socket.emit('signInResponse',{success:true});
 			} else {
 				socket.emit('signInResponse',{success:false});			

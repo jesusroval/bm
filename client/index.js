@@ -3,12 +3,18 @@
 	var WIDTH = 640;
 	var HEIGHT = 480;
 	var socket = io();
+	var TILE_SIZE = 64;	
+
+
 
 	var mX = 0;
 	var mY = 0;
 	var playChar;
 	var cats = ['cat.png' ,'hedgehog.png', 'tiger.png', 'bomb.png', 'tile.png'];
 	var charArray = [];
+	var map;
+	var array2D = [];
+	var testID;
 	
 	//sign
 	var signDiv = document.getElementById('signDiv');
@@ -17,6 +23,28 @@
 	var signDivSignUp = document.getElementById('signDiv-signUp');
 	var signDivPassword = document.getElementById('signDiv-password');
 	
+// var array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+ 
+// var array2D = [];
+// for(var i = 0 ; i < 40; i++){
+// 	array2D[i] = [];
+// 	for(var j = 0 ; j < 40; j++){
+// 		array2D[i][j] = array[i * 40 + j];
+// 	}
+// }
+
+// 		isPositionWall = function(pt){
+// 				var gridX = Math.floor(pt.obj.x / TILE_SIZE);
+// 				var gridY = Math.floor(pt.obj.y / TILE_SIZE);
+// 				if(gridX < 0 || gridX >= array2D[0].length)
+// 					return true;
+// 				if(gridY < 0 || gridY >= array2D.length)
+// 					return true;
+// 				return array2D[gridY][gridX];
+// 			}
+
+
+
 	signDivSignIn.onclick = function(){
 		socket.emit('signIn',{username:signDivUsername.value,password:signDivPassword.value});
 	}
@@ -47,33 +75,32 @@
 		chatText.innerHTML += '<div>' + data + '</div>';
 	});
 	socket.on('evalAnswer',function(data){
-		console.log(data);
 	});
 	
 	
-	chatForm.onsubmit = function(e){
-		e.preventDefault();
-		if(chatInput.value[0] === '/')
-			socket.emit('evalServer',chatInput.value.slice(1));
-		else
-			socket.emit('sendMsgToServer',chatInput.value);
-		chatInput.value = '';		
-	}
+	// chatForm.onsubmit = function(e){
+	// 	e.preventDefault();
+	// 	if(chatInput.value[0] === '/')
+	// 		socket.emit('evalServer',chatInput.value.slice(1));
+	// 	else
+	// 		socket.emit('sendMsgToServer',chatInput.value);
+	// 	chatInput.value = '';		
+	// }
 	
 	function game(){
-		var Img = {};
-		Img.player = new Image();
-		Img.player.src = '/client/img/player.png';
-		Img.bullet = new Image();
-		Img.bullet.src = '/client/img/bullet.png';
+		// var Img = {};
+		// Img.player = new Image();
+		// Img.player.src = '/client/img/player.png';
+		// Img.bullet = new Image();
+		// Img.bullet.src = '/client/img/bullet.png';
 		
-		Img.map = {};
-		Img.map['field'] = new Image();
-		Img.map['field'].src = '/client/img/map.png';
-		Img.map['forest'] = new Image();
-		Img.map['forest'].src = '/client/img/map2.png';
+		// Img.map = {};
+		// Img.map['field'] = new Image();
+		// Img.map['field'].src = '/client/img/map.png';
+		// Img.map['forest'] = new Image();
+		// Img.map['forest'].src = '/client/img/map2.png';
 
-		var renderer = new PIXI.WebGLRenderer(680, 400);
+		var renderer = new PIXI.WebGLRenderer(704, 704);
 		
 		document.body.appendChild(renderer.view);
 		
@@ -85,28 +112,47 @@
 
 		var loader = PIXI.loader;
 
-	    loader.add('/client/img/map.png');	
+	    loader.add(assetsToLoader);	
 
 	    loader.load()
 		
 			    loader.load((loader, resources) => {
 	    		// var frameName = cats[2];
-	    		// var map = new PIXI.Sprite.fromImage('/client/img/map.png');
-	    		// map.position.x = 0;
-	    		// map.position.y = 0;
 
-			    // stage.addChild(map);
 
 
 	    	
 
 	        animate();
+
 	    });
+
+
+
+// -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		// var ctx = document.getElementById("ctx").getContext("2d");
 		// ctx.font = '30px Arial';
 			function animate() {
 				requestAnimationFrame(animate);
-
+				if(testID){
+					p = Player.list[testID];
+				}
 				// test.rotation += 0.01;
 
 				renderer.render(stage);
@@ -123,9 +169,45 @@
 			self.score = initPack.score;
 			self.map = initPack.map;
 
+			if(selfId === null){selfId = self.id};
 
-			self.obj = new PIXI.Sprite.fromImage('/client/img/player.png');
+
+			self.obj = new PIXI.Sprite.fromFrame('cat.png');
+			self.obj.scale.x = 0.7;
+			self.obj.scale.y = 0.7;
+			self.obj.x = 100;
+			self.obj.y = 100;
 			stage.addChild(self.obj);
+
+			// var testArray = [];
+			// for (var i = 0; i < 4; i++) {
+			// 	var test = new PIXI.Sprite.fromImage('/client/img/Untitled.png');
+			// 	testArray.push(test);
+			// }
+
+			// //left
+			// testArray[0].x = self.obj.x;
+			// testArray[0].y = self.obj.y;
+			// //right
+			// testArray[1].x = self.obj.x + 45;
+			// testArray[1].y = self.obj.y;
+
+			// //bottom left
+			// testArray[2].x = self.obj.x;
+			// testArray[2].y = self.obj.y + 45;
+
+			// //bottom (top)right
+			// testArray[3].x = self.obj.x + 45;
+			// testArray[3].y = self.obj.y + 45;
+
+
+
+
+			// for (var i = 0; i < testArray.length; i++) {
+			// 	stage.addChild(testArray[i]);
+			// }
+
+
 
 			self.draw = function(){	
 
@@ -161,6 +243,14 @@
 			self.x = initPack.x;
 			self.y = initPack.y;
 			self.map = initPack.map;
+
+			self.obj = new PIXI.Sprite.fromFrame('bomb.png');
+			
+			self.obj.scale.x = 0.5;
+			self.obj.scale.y = 0.5;
+
+			stage.addChild(self.obj);
+
 			
 			self.draw = function(){
 				if(Player.list[selfId].map !== self.map)
@@ -183,24 +273,56 @@
 		
 		var selfId = null;
 
-		socket.on('init',function(data){	
+		socket.on('init',function(data){
+			// if(!map){
+
+			// 	map = new PIXI.Sprite.fromImage('/client/img/map.png');
+
+	  //   		map.scale.x = 2;
+	  //   		map.scale.y = 2;
+	  //   		map.position.x = 0;
+	  //   		map.position.y = 0;
+
+			//     stage.addChild(map);
+			// }
+
+			if(data.serverArray && !map){				
+				array2D = data.serverArray;
+
+				for (var i = 0; i < array2D[0].length; i++) {
+					for (var j = 0; j < array2D.length; j++) {
+						if (array2D[i][j] === 1) {
+
+
+							var box = new PIXI.Sprite.fromFrame('tile.png');
+							box.position.x = j*TILE_SIZE;
+							box.position.y = i*TILE_SIZE;
+							// box.scale.x=2;
+							// box.scale.y=2;
+							stage.addChild(box);
+						}
+					}
+				}
+			}
+
+
 			if(data.selfId)
 				selfId = data.selfId;
 			//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
 			if(data.player){
-			for(var i = 0 ; i < data.player.length; i++){
-				charArray.push(new Player(data.player[i]));
+				for(var i = 0 ; i < data.player.length; i++){
+					charArray.push(new Player(data.player[i]));
+				}
+				for(var i = 0 ; i < data.bullet.length; i++){
+					new Bullet(data.bullet[i]);
+				}
 			}
-			for(var i = 0 ; i < data.bullet.length; i++){
-				new Bullet(data.bullet[i]);
-			}
-		}
-		});
-		socket.on('apa', function(data){
-			console.log(data);
+
 		});
 		socket.on('update',function(data){
 			//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
+
+
 			for(var i = 0 ; i < data.player.length; i++){
 				var pack = data.player[i];
 				var p = Player.list[pack.id];
@@ -210,14 +332,22 @@
 					p = Player.list[pack.id];
 				}
 
-					if(pack.x !== undefined)
+				testID = pack.id;
+					var oldX = p.obj.x;
+					var oldY = p.obj.y;
+
+					if(pack.x !== undefined){
 						p.obj.x = pack.x;
+					}
 					if(pack.y !== undefined)
 						p.obj.y = pack.y;
 					if(pack.hp !== undefined)
 						p.hp = pack.hp;
 					if(pack.score !== undefined)
-						p.score = pack.score;					
+						p.score = pack.score;
+
+
+				
 
 			}
 			for(var i = 0 ; i < data.bullet.length; i++){
@@ -225,9 +355,9 @@
 				var b = Bullet.list[data.bullet[i].id];
 				if(b){
 					if(pack.x !== undefined)
-						b.x = pack.x;
+						b.obj.x = pack.x + 8;
 					if(pack.y !== undefined)
-						b.y = pack.y;
+						b.obj.y = pack.y + 16;
 				}
 			}
 		});
@@ -236,9 +366,11 @@
 			//{player:[12323],bullet:[12323,123123]}
 			for(var i = 0 ; i < data.player.length; i++){
 				delete Player.list[data.player[i]];
+
 			}
 			for(var i = 0 ; i < data.bullet.length; i++){
-				delete Bullet.list[data.bullet[i]];
+				var b = Bullet.list[data.bullet[i]];
+				stage.removeChild(b.obj);
 			}
 		});
 		
@@ -288,17 +420,17 @@
 				socket.emit('keyPress',{inputId:'up',state:false});
 		}
 		
-		document.onmousedown = function(event){
-			socket.emit('keyPress',{inputId:'attack',state:true});
-		}
-		document.onmouseup = function(event){
-			socket.emit('keyPress',{inputId:'attack',state:false});
-		}
+		// document.onmousedown = function(event){
+		// 	socket.emit('keyPress',{inputId:'attack',state:true});
+		// }
+		// document.onmouseup = function(event){
+		// 	socket.emit('keyPress',{inputId:'attack',state:false});
+		// }
 		document.onmousemove = function(event){
 
-			// mX = event.clientX;
-			// mY = event.clientY;
-			// mousePos(mX, mY);
+			mX = renderer.plugins.interaction.mouse.global.x;
+			mY = renderer.plugins.interaction.mouse.global.y;
+			mousePos(mX, mY); 
 
 			// var x = -Player.list[selfId].x + event.clientX - 8;
 			// var y = -Player.list[selfId].y + event.clientY - 8;
@@ -306,12 +438,19 @@
 			// socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
 		}
 		
-		// mousePos = function(eX, eY){
-		// 	var x = -Player.list[selfId].x + eX - 8;
-		// 	var y = -Player.list[selfId].y + eY - 8;
-		// 	var angle = Math.atan2(y,x) / Math.PI * 180;
-		// 	socket.emit('keyPress',{inputId:'mouseAngle',state:angle});		
-		// }
+		mousePos = function(eX, eY){
+			if (Player.list[selfId].obj.x && Player.list[selfId].obj.y) {
+				var x = -Player.list[selfId].obj.x + eX -8;
+				var y = -Player.list[selfId].obj.y + eY -8;
+
+				var angle = Math.atan2(y,x) / Math.PI * 180;
+
+				socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
+			}
+
+
+	
+		}
 		
 
 }

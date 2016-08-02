@@ -234,11 +234,10 @@
 			self.y = initPack.y;
 
 			self.obj = new PIXI.Sprite.fromImage('/client/img/bomb.png');
-			self.obj.x = initPack.x;
-			self.obj.y = initPack.y;
+			self.obj.x = initPack.x + 10;
+			self.obj.y = initPack.y + 20;
 			stage.addChild(self.obj);
 
-			socket.emit('keyPress',{inputId:'bomb',state:false});
 
 			Bomb.list[self.id] = self;		
 			return self;

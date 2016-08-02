@@ -153,6 +153,7 @@ var Player = function(param){
 			Bomb(
 				{x:self.x,
 				y:self.y});
+			self.dropBomb = false;
 		}
 	}
 

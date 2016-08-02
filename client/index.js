@@ -15,7 +15,9 @@
 	var map;
 	var array2D = [];
 	var testID;
-	
+	var bombArray = [];
+	var oldX;
+	var oldY;
 	//sign
 	var signDiv = document.getElementById('signDiv');
 	var signDivUsername = document.getElementById('signDiv-username');
@@ -225,7 +227,23 @@
 		}
 		Player.list = {};
 
-			
+		var Bomb = function(initPack){
+			var self = {};
+			self.id = initPack.id;
+			self.x = initPack.x;
+			self.y = initPack.y;
+
+			self.obj = new PIXI.Sprite.fromImage('/client/img/bomb.png');
+			self.obj.x = initPack.x;
+			self.obj.y = initPack.y;
+			stage.addChild(self.obj);
+
+			socket.emit('keyPress',{inputId:'bomb',state:false});
+
+			Bomb.list[self.id] = self;		
+			return self;
+		}
+		Bomb.list = {};	
 		var Bullet = function(initPack){
 			var self = {};
 			self.id = initPack.id;
@@ -274,7 +292,12 @@
 
 			//     stage.addChild(map);
 			// }
-
+			if(data.bomb){
+				for (var i = 0; i < data.bomb.length; i++) {
+					new Bomb(data.bomb[i]);
+				}
+				
+			}
 			if(data.serverArray && !map){				
 				array2D = data.serverArray;
 
@@ -315,10 +338,20 @@
 			}
 
 		});
+		socket.on('bombTest', function(data){
+			console.log(data);
+		});
 		socket.on('update',function(data){
 			//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 
+			for (var i = 0; i < data.bomb.length; i++) {
+				if(data.bomb[i].explode === true){
+					var pack = data.bomb[i];
+					var b = Bomb.list[pack.id];
 
+					stage.removeChild(b.obj);
+				}
+			}
 			for(var i = 0 ; i < data.player.length; i++){
 				var pack = data.player[i];
 				var p = Player.list[pack.id];
@@ -329,8 +362,8 @@
 				}
 
 				testID = pack.id;
-					var oldX = p.obj.x;
-					var oldY = p.obj.y;
+					oldX = p.obj.x;
+					oldY = p.obj.y;
 
 					if(pack.x !== undefined){
 						p.obj.x = pack.x;
@@ -342,13 +375,13 @@
 					if(pack.score !== undefined)
 						p.score = pack.score;
 
-					if(pack.dropBomb === true){
-						var bomb = new PIXI.Sprite.fromImage('/client/img/bomb.png');
-						bomb.x = p.obj.x + 10;
-						bomb.y = p.obj.y + 20;
-						stage.addChild(bomb);
-						socket.emit('keyPress',{inputId:'bomb',state:false});
-					}
+					// if(pack.dropBomb === true){
+					// 	var bomb = new PIXI.Sprite.fromImage('/client/img/bomb.png');
+					// 	bomb.x = p.obj.x + 10;
+					// 	bomb.y = p.obj.y + 20;
+					// 	stage.addChild(bomb);
+					// 	socket.emit('keyPress',{inputId:'bomb',state:false});
+					// }
 
 
 				
@@ -413,8 +446,7 @@
 				socket.emit('keyPress',{inputId:'left',state:true});
 			else if(event.keyCode === 87) // w
 				socket.emit('keyPress',{inputId:'up',state:true});
-			else if(event.keyCode === 32) //space
-				socket.emit('keyPress',{inputId:'bomb',state:true});
+
 
 				
 		}
@@ -427,6 +459,8 @@
 				socket.emit('keyPress',{inputId:'left',state:false});
 			else if(event.keyCode === 87) // w
 				socket.emit('keyPress',{inputId:'up',state:false});
+			else if(event.keyCode === 32) //space
+				socket.emit('keyPress',{inputId:'bomb',state:true});
 		}
 		
 		// document.onmousedown = function(event){

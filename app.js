@@ -148,7 +148,14 @@ var Player = function(param){
 		if(self.pressingAttack){
 			self.shootBullet(self.mouseAngle);
 		}
+
+		if(self.dropBomb){
+			Bomb(
+				{x:self.x,
+				y:self.y});
+		}
 	}
+
 	self.shootBullet = function(angle){
 		Bullet({
 			parent:self.id,
@@ -181,20 +188,6 @@ var Player = function(param){
 			self.spdY = self.maxSpd;
 		else
 			self.spdY = 0;	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		// //Square
 		// var leftBumper = {x:self.x, y:self.y};
@@ -319,6 +312,57 @@ Player.update = function(){
 	return pack;
 }
 
+var Bomb = function(param){
+	var self = Entity(param);
+	self.id = Math.random();
+	self.toRemove;
+	self.fuse = 2000;
+	self.explode = false;
+
+	self.explodeFunc = setTimeout(function() { 
+		self.explode = true;
+	}, self.fuse);
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		};
+	}
+
+	self.getUpdatePack = function(){
+				return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+			explode:self.explode,
+		}	
+	}
+
+
+	Bomb.list[self.id] = self;
+	initPack.bomb.push(self.getInitPack());
+	return self;
+
+}
+Bomb.list = {};
+
+Bomb.update = function(){
+	var pack = [];
+	for(var i in Bomb.list){
+		var bomb = Bomb.list[i];
+		// bomb.update();
+
+
+		// if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
+		// 	delete Bullet.list[i];
+		// 	removePack.bullet.push(bullet.id);
+		// } else
+		pack.push(bomb.getUpdatePack());		
+	}
+	return pack;
+}
 
 var Bullet = function(param){
 	var self = Entity(param);
@@ -476,7 +520,7 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[], serverArray:array2D};
+var initPack = {player:[],bullet:[], bomb:[],serverArray:array2D};
 var removePack = {player:[],bullet:[]};
 
 
@@ -484,6 +528,7 @@ setInterval(function(){
 	var pack = {
 		player:Player.update(),
 		bullet:Bullet.update(),
+		bomb:Bomb.update(),
 	}
 	
 	for(var i in SOCKET_LIST){
@@ -494,6 +539,7 @@ setInterval(function(){
 	}
 	initPack.player = [];
 	initPack.bullet = [];
+	initPack.bomb = [];
 	removePack.player = [];
 	removePack.bullet = [];
 	

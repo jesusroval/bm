@@ -226,6 +226,56 @@
 			return self;
 		}
 		Player.list = {};
+		var explode = function(self){
+			var gridX = Math.floor((self.x + 24) / TILE_SIZE);
+			var gridY = Math.floor((self.y + 28) / TILE_SIZE);
+
+			var objects = [];
+
+			var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			rightFire.position.x = (gridX + 1) * TILE_SIZE;
+			rightFire.position.y = gridY * TILE_SIZE;
+			stage.addChild(rightFire);
+			objects.push(rightFire);
+
+			var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			leftFire.position.x = gridX * TILE_SIZE;
+			leftFire.position.y = (gridY +1) * TILE_SIZE;
+			leftFire.rotation = Math.PI;
+			stage.addChild(leftFire);
+			objects.push(leftFire);
+
+			var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			topFire.position.x = gridX * TILE_SIZE;
+			topFire.position.y = gridY * TILE_SIZE;
+			topFire.rotation = Math.PI * 1.5;
+			stage.addChild(topFire);
+			objects.push(topFire);
+
+			var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			bottomFire.position.x = (gridX + 1) * TILE_SIZE;
+			bottomFire.position.y = (gridY + 1) * TILE_SIZE;
+			bottomFire.rotation = Math.PI * 0.5;
+			stage.addChild(bottomFire);
+			objects.push(bottomFire);
+
+			return objects;
+		}
+		var Explotion = function(initPack){
+			var self = {};
+			self.id = initPack.id;
+			self.x = initPack.x;
+			self.y = initPack.y;
+
+
+
+			self.objects = explode(self);
+
+
+			Explotion.list[self.id] = self;		
+			return self;
+		}
+		Explotion.list = {};	
 
 		var Bomb = function(initPack){
 			var self = {};
@@ -243,6 +293,7 @@
 			return self;
 		}
 		Bomb.list = {};	
+
 		var Bullet = function(initPack){
 			var self = {};
 			self.id = initPack.id;
@@ -291,6 +342,12 @@
 
 			//     stage.addChild(map);
 			// }
+			if(data.explotion)
+			{
+				for (var i = 0; i < data.explotion.length; i++) {
+					new Explotion(data.explotion[i]);
+				}
+			}
 			if(data.bomb){
 				for (var i = 0; i < data.bomb.length; i++) {
 					new Bomb(data.bomb[i]);
@@ -340,17 +397,50 @@
 		socket.on('bombTest', function(data){
 			console.log(data);
 		});
+
+
+
+
 		socket.on('update',function(data){
 			//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 
-			for (var i = 0; i < data.bomb.length; i++) {
-				if(data.bomb[i].explode === true){
-					var pack = data.bomb[i];
-					var b = Bomb.list[pack.id];
+			// for (var i = 0; i < data.bomb.length; i++) {
+			// 	if(data.bomb[i].explode === true){
+			// 		var pack = data.bomb[i];
+			// 		var b = Bomb.list[pack.id];
 
-					stage.removeChild(b.obj);
-				}
-			}
+			// 		var gridX = Math.floor(b.obj.x / TILE_SIZE);
+			// 		var gridY = Math.floor(b.obj.y / TILE_SIZE);
+
+
+			// 		var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			// 		rightFire.position.x = (gridX + 1) * TILE_SIZE;
+			// 		rightFire.position.y = gridY * TILE_SIZE;
+			// 		stage.addChild(rightFire);
+
+			// 		var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			// 		leftFire.position.x = gridX * TILE_SIZE;
+			// 		leftFire.position.y = (gridY +1) * TILE_SIZE;
+			// 		leftFire.rotation = Math.PI;
+			// 		stage.addChild(leftFire);
+
+			// 		var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			// 		topFire.position.x = gridX * TILE_SIZE;
+			// 		topFire.position.y = gridY * TILE_SIZE;
+			// 		topFire.rotation = Math.PI * 1.5;
+			// 		stage.addChild(topFire);
+
+			// 		var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+			// 		bottomFire.position.x = (gridX + 1) * TILE_SIZE;
+			// 		bottomFire.position.y = (gridY + 1) * TILE_SIZE;
+			// 		bottomFire.rotation = Math.PI * 0.5;
+			// 		stage.addChild(bottomFire);
+
+
+
+			// 		stage.removeChild(b.obj);
+			// 	}
+			// }
 			for(var i = 0 ; i < data.player.length; i++){
 				var pack = data.player[i];
 				var p = Player.list[pack.id];
@@ -405,6 +495,20 @@
 				stage.removeChild(p.obj);
 				delete Player.list[data.player[i]];
 
+			}
+			for (var i = 0; i < data.bomb.length; i++) {
+				var b = Bomb.list[data.bomb[i]];
+
+				stage.removeChild(b.obj);
+				delete Bomb.list[data.bomb[i]];
+
+			}
+			for (var i = 0; i < data.explotion.length; i++) {
+				var e = Explotion.list[data.explotion[i]];
+				for (var i = 0; i < e.objects.length; i++) {
+					stage.removeChild(e.objects[i]);
+				}
+				delete Explotion.list[data.explotion[i]];
 			}
 			// for(var i = 0 ; i < data.bullet.length; i++){
 			// 	var b = Bullet.list[data.bullet[i]];

@@ -39,9 +39,6 @@ var TILE_SIZE = 64;
 				1,0,1,0,1,0,1,0,1,0,1,
 				1,0,0,0,0,0,0,0,0,0,1,				
 				1,1,1,1,1,1,1,1,1,1,1,
-
-
-
 				];
 
 var array2D = [];
@@ -313,6 +310,60 @@ Player.update = function(){
 	return pack;
 }
 
+var Explotion = function(param){
+	var self = Entity(param);
+	self.id = Math.random();
+	self.toRemove;
+	self.fuse = 500;
+
+	self.explodeFunc = setTimeout(function() { 
+		self.toRemove = true;
+
+		
+	}, self.fuse);
+
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		};
+	}
+	self.getUpdatePack = function(){
+				return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		}	
+	}
+	Explotion.list[self.id] = self;
+	initPack.explotion.push(self.getInitPack());
+	return self;
+
+
+}
+Explotion.list = {};
+
+Explotion.update = function(){
+	var pack = [];
+	for(var i in Explotion.list){
+		var explotion = Explotion.list[i];
+		// bomb.update();
+		if(explotion.toRemove){
+			delete Explotion.list[i];
+			removePack.explotion.push(explotion.id);
+		}
+
+		// if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
+		// 	delete Bullet.list[i];
+		// 	removePack.bullet.push(bullet.id);
+		// } else
+		pack.push(explotion.getUpdatePack());		
+	}
+	return pack;
+}
+
 var Bomb = function(param){
 	var self = Entity(param);
 	self.id = Math.random();
@@ -321,7 +372,12 @@ var Bomb = function(param){
 	self.explode = false;
 
 	self.explodeFunc = setTimeout(function() { 
-		self.explode = true;
+		self.toRemove = true;
+		Explotion({
+					x:self.x,
+					y:self.y,
+					});
+
 	}, self.fuse);
 
 	self.getInitPack = function(){
@@ -354,7 +410,10 @@ Bomb.update = function(){
 	for(var i in Bomb.list){
 		var bomb = Bomb.list[i];
 		// bomb.update();
-
+		if(bomb.toRemove){
+			delete Bomb.list[i];
+			removePack.bomb.push(bomb.id);
+		}
 
 		// if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
 		// 	delete Bullet.list[i];
@@ -521,8 +580,8 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[], bomb:[],serverArray:array2D};
-var removePack = {player:[],bullet:[]};
+var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D};
+var removePack = {player:[],bullet:[], bomb:[], explotion:[]};
 
 
 setInterval(function(){
@@ -530,6 +589,7 @@ setInterval(function(){
 		player:Player.update(),
 		bullet:Bullet.update(),
 		bomb:Bomb.update(),
+		explotion:Explotion.update(),
 	}
 	
 	for(var i in SOCKET_LIST){
@@ -541,8 +601,11 @@ setInterval(function(){
 	initPack.player = [];
 	initPack.bullet = [];
 	initPack.bomb = [];
+	initPack.explotion = [];
 	removePack.player = [];
 	removePack.bullet = [];
+	removePack.bomb = [];
+	removePack.explotion = [];
 	
 },1000/25);
 

@@ -33,9 +33,9 @@ var TILE_SIZE = 64;
 				1,0,1,0,1,0,1,0,1,0,1,
 				1,0,0,0,0,0,0,0,0,0,1,
 				1,0,1,0,1,0,1,0,1,0,1,
-				1,0,0,0,0,0,0,0,0,0,1,
-				1,0,1,0,1,0,1,0,1,0,1,
-				1,0,0,0,0,0,0,0,0,0,1,
+				1,0,0,0,0,2,0,0,0,0,1,
+				1,0,1,0,1,2,1,2,1,0,1,
+				1,0,0,0,2,2,0,0,2,0,1,
 				1,0,1,0,1,0,1,0,1,0,1,
 				1,0,0,0,0,0,0,0,0,0,1,				
 				1,1,1,1,1,1,1,1,1,1,1,
@@ -132,6 +132,7 @@ var Player = function(param){
 	self.pressingUp = false;
 	self.pressingDown = false;
 	self.pressingAttack = false;
+	self.dropBomb = false;
 	self.mouseAngle = 0;
 	self.maxSpd = 5;
 	self.hp = 10;
@@ -160,41 +161,66 @@ var Player = function(param){
 	
 	self.updateSpd = function(){
 
-		// var rightBumper = {x:self.x+40, y:self.y};
-		// var leftBumper = {x:self.x-40, y:self.y};
-		// var topBumper = {x:self.x, y:self.y - 16};
-		// var bottomBumper = {x:self.x, y:self.y + 16};
 
-		// 		var rightBumper = {x:self.x+40, y:self.y+30};
-		// var leftBumper = {x:self.x+10, y:self.y+30};
-		// var topBumper = {x:self.x+25, y:self.y +10};
-		// var bottomBumper = {x:self.x+25, y:self.y +50};	
-
-		// var rightBumper = {x:self.x+50, y:self.y+30};
-		// var leftBumper = {x:self.x + 1, y:self.y+30};
-		// var topBumper = {x:self.x+25, y:self.y};
-		// var bottomBumper = {x:self.x+25, y:self.y +50};
-		var leftBumper = {x:self.x, y:self.y};
-		var rightBumper = {x:self.x+45, y:self.y};
-
-		var bottomBumper = {x:self.x, y:self.y +45};	
-		var topBumper = {x:self.x+45, y:self.y+45};	
-		
+		var rightBumper = {x:self.x+45, y:self.y+28};
+		var leftBumper = {x:self.x + 1, y:self.y+28};
+		var topBumper = {x:self.x+24, y:self.y};
+		var bottomBumper = {x:self.x+24, y:self.y +56};
 
 
-		if(self.pressingRight && !isPositionWall(rightBumper) && !isPositionWall(topBumper))
+		if(self.pressingRight && !isPositionWall(rightBumper))
 			self.spdX = self.maxSpd;
-		else if(self.pressingLeft && !isPositionWall(leftBumper) && !isPositionWall(bottomBumper))
+		else if(self.pressingLeft && !isPositionWall(leftBumper))
 			self.spdX = -self.maxSpd;
 		else
 			self.spdX = 0;
 		
-		if(self.pressingUp && !isPositionWall(leftBumper) && !isPositionWall(rightBumper))
+		if(self.pressingUp && !isPositionWall(topBumper))
 			self.spdY = -self.maxSpd;
-		else if(self.pressingDown && !isPositionWall(bottomBumper) && !isPositionWall(topBumper))
+		else if(self.pressingDown && !isPositionWall(bottomBumper))
 			self.spdY = self.maxSpd;
 		else
-			self.spdY = 0;		
+			self.spdY = 0;	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// //Square
+		// var leftBumper = {x:self.x, y:self.y};
+		// var rightBumper = {x:self.x+45, y:self.y};
+
+		// var bottomBumper = {x:self.x, y:self.y +56};	
+		// var topBumper = {x:self.x+45, y:self.y+56};	
+		
+
+
+		// if(self.pressingRight && !isPositionWall(rightBumper) && !isPositionWall(topBumper))
+		// 	self.spdX = self.maxSpd;
+		// else if(self.pressingLeft && !isPositionWall(leftBumper) && !isPositionWall(bottomBumper))
+		// 	self.spdX = -self.maxSpd;
+		// else
+		// 	self.spdX = 0;
+		
+		// if(self.pressingUp && !isPositionWall(leftBumper) && !isPositionWall(rightBumper))
+		// 	self.spdY = -self.maxSpd;
+		// else if(self.pressingDown && !isPositionWall(bottomBumper) && !isPositionWall(topBumper))
+		// 	self.spdY = self.maxSpd;
+		// else
+		// 	self.spdY = 0;	
+
+
+
 	}
 	
 	self.getInitPack = function(){
@@ -216,7 +242,8 @@ var Player = function(param){
 			x:self.x,
 			y:self.y,
 			hp:self.hp,
-			score:self.score
+			score:self.score,
+			dropBomb:self.dropBomb
 		}	
 	}
 	
@@ -252,6 +279,8 @@ Player.onConnect = function(socket){
 			player.mouseAngle = data.state;		
 		else if(data.inputId === 'attack')
 			player.pressingAttack = data.state;
+		else if(data.inputId === 'bomb')
+			player.dropBomb = data.state;
 
 	});
 

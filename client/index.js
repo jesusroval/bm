@@ -110,25 +110,14 @@
 		var assetsToLoader = ["/client/img/animals.json"];
 
 
-		var loader = PIXI.loader;
-
-	    loader.add(assetsToLoader);	
-
-	    loader.load()
-		
-			    loader.load((loader, resources) => {
-	    		// var frameName = cats[2];
+		var loader = new PIXI.loaders.Loader('/client/img', 5);
 
 
 
-	    	
 
-	        animate();
+		loader.load();
 
-	    });
-
-
-
+		animate();
 // -
 
 
@@ -140,7 +129,7 @@
 
 
 
-
+	
 
 
 
@@ -171,10 +160,10 @@
 
 			if(selfId === null){selfId = self.id};
 
-
-			self.obj = new PIXI.Sprite.fromFrame('cat.png');
-			self.obj.scale.x = 0.7;
-			self.obj.scale.y = 0.7;
+// here
+			self.obj = new PIXI.Sprite.fromImage('/client/img/player.png');
+			self.obj.scale.x = 2;
+			self.obj.scale.y = 2;
 			self.obj.x = 100;
 			self.obj.y = 100;
 			stage.addChild(self.obj);
@@ -244,7 +233,7 @@
 			self.y = initPack.y;
 			self.map = initPack.map;
 
-			self.obj = new PIXI.Sprite.fromFrame('bomb.png');
+			self.obj = new PIXI.Sprite.fromImage('/client/img/bullet.png');
 			
 			self.obj.scale.x = 0.5;
 			self.obj.scale.y = 0.5;
@@ -292,9 +281,14 @@
 				for (var i = 0; i < array2D[0].length; i++) {
 					for (var j = 0; j < array2D.length; j++) {
 						if (array2D[i][j] === 1) {
-
-
-							var box = new PIXI.Sprite.fromFrame('tile.png');
+							var box = new PIXI.Sprite.fromImage('/client/img/grid.png');
+							box.position.x = j*TILE_SIZE;
+							box.position.y = i*TILE_SIZE;
+							// box.scale.x=2;
+							// box.scale.y=2;
+							stage.addChild(box);
+						} else if(array2D[i][j] === 2){
+							var box = new PIXI.Sprite.fromImage('/client/img/stone.png');
 							box.position.x = j*TILE_SIZE;
 							box.position.y = i*TILE_SIZE;
 							// box.scale.x=2;
@@ -303,6 +297,8 @@
 						}
 					}
 				}
+
+				map = array2D;
 			}
 
 
@@ -346,32 +342,42 @@
 					if(pack.score !== undefined)
 						p.score = pack.score;
 
+					if(pack.dropBomb === true){
+						var bomb = new PIXI.Sprite.fromImage('/client/img/bomb.png');
+						bomb.x = p.obj.x + 10;
+						bomb.y = p.obj.y + 20;
+						stage.addChild(bomb);
+						socket.emit('keyPress',{inputId:'bomb',state:false});
+					}
+
 
 				
 
 			}
-			for(var i = 0 ; i < data.bullet.length; i++){
-				var pack = data.bullet[i];
-				var b = Bullet.list[data.bullet[i].id];
-				if(b){
-					if(pack.x !== undefined)
-						b.obj.x = pack.x + 8;
-					if(pack.y !== undefined)
-						b.obj.y = pack.y + 16;
-				}
-			}
+			// for(var i = 0 ; i < data.bullet.length; i++){
+			// 	var pack = data.bullet[i];
+			// 	var b = Bullet.list[data.bullet[i].id];
+			// 	if(b){
+			// 		if(pack.x !== undefined)
+			// 			b.obj.x = pack.x + 8;
+			// 		if(pack.y !== undefined)
+			// 			b.obj.y = pack.y + 16;
+			// 	}
+			// }
 		});
 		
 		socket.on('remove',function(data){
 			//{player:[12323],bullet:[12323,123123]}
 			for(var i = 0 ; i < data.player.length; i++){
+				var p = Player.list[data.player[i]];
+				stage.removeChild(p.obj);
 				delete Player.list[data.player[i]];
 
 			}
-			for(var i = 0 ; i < data.bullet.length; i++){
-				var b = Bullet.list[data.bullet[i]];
-				stage.removeChild(b.obj);
-			}
+			// for(var i = 0 ; i < data.bullet.length; i++){
+			// 	var b = Bullet.list[data.bullet[i]];
+			// 	stage.removeChild(b.obj);
+			// }
 		});
 		
 		// setInterval(function(){
@@ -407,6 +413,9 @@
 				socket.emit('keyPress',{inputId:'left',state:true});
 			else if(event.keyCode === 87) // w
 				socket.emit('keyPress',{inputId:'up',state:true});
+			else if(event.keyCode === 32) //space
+				socket.emit('keyPress',{inputId:'bomb',state:true});
+
 				
 		}
 		document.onkeyup = function(event){

@@ -332,11 +332,28 @@
 				var temp4 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
 				temp4.position.x = initPack.explosionCords[i+3].x * TILE_SIZE;
 				temp4.position.y = initPack.explosionCords[i+3].y * TILE_SIZE;
-				stage.addChild(temp4);
-
-
-		
+				stage.addChild(temp4);		
 		}
+
+		var Tile = function(initPack){
+			var self = {};
+			self.id = initPack.id;
+
+
+			if(initPack.type === 1){
+				self.obj = new PIXI.Sprite.fromImage('/client/img/grid.png');
+			} else if(initPack.type === 2){
+				self.obj = new PIXI.Sprite.fromImage('/client/img/stone.png');
+			}
+
+			self.obj.x = initPack.gridX * TILE_SIZE;
+			self.obj.y = initPack.gridY * TILE_SIZE;
+			stage.addChild(self.obj);
+
+			Tile.list[self.id] = self;		
+			return self;
+		}
+		Tile.list = {};
 
 		var Bomb = function(initPack){
 			var self = {};
@@ -348,60 +365,6 @@
 			self.obj.x = initPack.x + 10;
 			self.obj.y = initPack.y + 20;
 			stage.addChild(self.obj);
-
-
-			
-
-			// for (var i = 0; i < initPack.explosionCords.length; i+=4) {
-			// 	var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-			// 	temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
-			// 	temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
-			// 	stage.addChild(temp);
-
-			// 	var temp2 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-			// 	temp2.position.x = initPack.explosionCords[i+1].x * TILE_SIZE;
-			// 	temp2.position.y = initPack.explosionCords[i+1].y * TILE_SIZE;
-			// 	stage.addChild(temp2);
-
-			// 	var temp3 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-			// 	temp3.position.x = initPack.explosionCords[i+2].x * TILE_SIZE;
-			// 	temp3.position.y = initPack.explosionCords[i+2].y * TILE_SIZE;
-			// 	stage.addChild(temp3);
-
-			// 	var temp4 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-			// 	temp4.position.x = initPack.explosionCords[i+3].x * TILE_SIZE;
-			// 	temp4.position.y = initPack.explosionCords[i+3].y * TILE_SIZE;
-			// 	stage.addChild(temp4);
-			// }
-
-			//gör fyra i smällen, for loop , i plus lika med 4
-
-
-			// var i = 0;
-
-			// var loopfunc = function(i){
-			// 	setTimeout(function() {
-
-			// 		var inside = function(i){
-			// 			var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-			// 			temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
-			// 			temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
-			// 			stage.addChild(temp);
-			// 			i += 1;
-
-			// 			if (i%4) {
-			// 				loopfunc(i);
-			// 			} else{
-			// 				inside(i);
-			// 			}						
-			// 		}
-
-			// 		inside(i);
-
-			// 	}, 30);
-			// }
-
-			// loopfunc(i);
 
 			Bomb.list[self.id] = self;		
 			return self;
@@ -428,13 +391,6 @@
 					return;
 				var width = Img.bullet.width/2;
 				var height = Img.bullet.height/2;
-				
-				// var x = self.x - Player.list[selfId].x + WIDTH/2;
-				// var y = self.y - Player.list[selfId].y + HEIGHT/2;
-				
-				// ctx.drawImage(Img.bullet,
-				// 	0,0,Img.bullet.width,Img.bullet.height,
-				// 	self.x-width/2,self.y-height/2,width,height);
 			}
 			
 			Bullet.list[self.id] = self;		
@@ -445,17 +401,14 @@
 		var selfId = null;
 
 		socket.on('init',function(data){
-			// if(!map){
+			
+			if(data.tile && !map){
+				for (var i = 0; i < data.tile.length; i++) {
+					new Tile(data.tile[i]);
+				}
+				map = true;		
+			}
 
-			// 	map = new PIXI.Sprite.fromImage('/client/img/map.png');
-
-	  //   		map.scale.x = 2;
-	  //   		map.scale.y = 2;
-	  //   		map.position.x = 0;
-	  //   		map.position.y = 0;
-
-			//     stage.addChild(map);
-			// }
 			if(data.explotion)
 			{
 				for (var i = 0; i < data.explotion.length; i++) {
@@ -467,31 +420,31 @@
 					new Bomb(data.bomb[i]);
 				}				
 			}
-			if(data.serverArray && !map){				
-				array2D = data.serverArray;
+			// if(data.serverArray && !map){				
+			// 	array2D = data.serverArray;
 
-				for (var i = 0; i < array2D[0].length; i++) {
-					for (var j = 0; j < array2D.length; j++) {
-						if (array2D[i][j] === 1) {
-							var box = new PIXI.Sprite.fromImage('/client/img/grid.png');
-							box.position.x = j*TILE_SIZE;
-							box.position.y = i*TILE_SIZE;
-							// box.scale.x=2;
-							// box.scale.y=2;
-							stage.addChild(box);
-						} else if(array2D[i][j] === 2){
-							var box = new PIXI.Sprite.fromImage('/client/img/stone.png');
-							box.position.x = j*TILE_SIZE;
-							box.position.y = i*TILE_SIZE;
-							// box.scale.x=2;
-							// box.scale.y=2;
-							stage.addChild(box);
-						}
-					}
-				}
+			// 	for (var i = 0; i < array2D[0].length; i++) {
+			// 		for (var j = 0; j < array2D.length; j++) {
+			// 			if (array2D[i][j] === 1) {
+			// 				var box = new PIXI.Sprite.fromImage('/client/img/grid.png');
+			// 				box.position.x = j*TILE_SIZE;
+			// 				box.position.y = i*TILE_SIZE;
+			// 				// box.scale.x=2;
+			// 				// box.scale.y=2;
+			// 				stage.addChild(box);
+			// 			} else if(array2D[i][j] === 2){
+			// 				var box = new PIXI.Sprite.fromImage('/client/img/stone.png');
+			// 				box.position.x = j*TILE_SIZE;
+			// 				box.position.y = i*TILE_SIZE;
+			// 				// box.scale.x=2;
+			// 				// box.scale.y=2;
+			// 				stage.addChild(box);
+			// 			}
+			// 		}
+			// 	}
 
-				map = array2D;
-			}
+			// 	map = array2D;
+			// }
 
 
 			if(data.selfId)
@@ -623,6 +576,13 @@
 				// }
 				stage.removeChild(e.obj);
 				delete Explotion.list[data.explotion[i]];
+			}
+
+			for (var i = 0; i < data.tile.length; i++) {
+				var t = Tile.list[data.tile[i]];
+				stage.removeChild(t.obj);
+				delete Tile.list[data.tile[i]];
+				array2D[data.tile.gridY][data.tile.gridX] = 0;
 			}
 			// for(var i = 0 ; i < data.bullet.length; i++){
 			// 	var b = Bullet.list[data.bullet[i]];

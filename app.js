@@ -31,15 +31,15 @@ var explotionOffSetY = 28;
 // }
 
 	var array =[1,1,1,1,1,1,1,1,1,1,1,
-				1,0,0,0,0,0,0,0,0,0,1,
-				1,0,1,0,1,0,1,0,1,0,1,
-				1,0,0,0,0,0,0,0,0,0,1,
-				1,0,1,0,1,0,1,0,1,0,1,
-				1,0,0,0,0,2,0,0,0,0,1,
-				1,0,1,0,1,2,1,2,1,0,1,
+				1,0,0,0,2,0,0,0,2,0,1,
+				1,0,1,0,1,0,1,0,1,2,1,
+				1,0,0,2,0,0,0,0,0,0,1,
+				1,2,1,2,1,0,1,0,1,0,1,
+				1,0,0,2,0,2,0,0,0,0,1,
+				1,2,1,0,1,2,1,2,1,0,1,
 				1,0,0,0,2,2,0,0,2,0,1,
-				1,0,1,0,1,0,1,0,1,0,1,
-				1,0,0,0,0,0,0,0,0,0,1,				
+				1,0,1,0,1,2,1,0,1,0,1,
+				1,0,0,0,0,2,2,0,0,0,1,				
 				1,1,1,1,1,1,1,1,1,1,1,
 				];
 
@@ -53,29 +53,22 @@ for(var i = 0 ; i < 11; i++){
 	}
 }
 
-	howIsTheMap = function(){
-		array2D = [];
-		for(var i = 0 ; i < 11; i++){
-			array2D[i] = [];
-			for(var j = 0 ; j < 11; j++){
-				array2D[i][j] = array[i * 11 + j];
-			}
-		}
-		return array2D;	
+
+
+
+
+isPositionWall = function(bumper){
+
+		var gridX = Math.floor(bumper.x / TILE_SIZE);
+		var gridY = Math.floor(bumper.y / TILE_SIZE);
+
+
+		if(gridX < 0 || gridX >= array2D[0].length)
+			return true;
+		if(gridY < 0 || gridY >= array2D.length)
+			return true;
+		return array2D[gridY][gridX];
 	}
-
-	isPositionWall = function(bumper){
-
-			var gridX = Math.floor(bumper.x / TILE_SIZE);
-			var gridY = Math.floor(bumper.y / TILE_SIZE);
-
-
-			if(gridX < 0 || gridX >= array2D[0].length)
-				return true;
-			if(gridY < 0 || gridY >= array2D.length)
-				return true;
-			return array2D[gridY][gridX];
-		}
 
 
 var Entity = function(param){
@@ -200,32 +193,6 @@ var Player = function(param){
 			self.spdY = self.maxSpd;
 		else
 			self.spdY = 0;	
-
-		// //Square
-		// var leftBumper = {x:self.x, y:self.y};
-		// var rightBumper = {x:self.x+45, y:self.y};
-
-		// var bottomBumper = {x:self.x, y:self.y +56};	
-		// var topBumper = {x:self.x+45, y:self.y+56};	
-		
-
-
-		// if(self.pressingRight && !isPositionWall(rightBumper) && !isPositionWall(topBumper))
-		// 	self.spdX = self.maxSpd;
-		// else if(self.pressingLeft && !isPositionWall(leftBumper) && !isPositionWall(bottomBumper))
-		// 	self.spdX = -self.maxSpd;
-		// else
-		// 	self.spdX = 0;
-		
-		// if(self.pressingUp && !isPositionWall(leftBumper) && !isPositionWall(rightBumper))
-		// 	self.spdY = -self.maxSpd;
-		// else if(self.pressingDown && !isPositionWall(bottomBumper) && !isPositionWall(topBumper))
-		// 	self.spdY = self.maxSpd;
-		// else
-		// 	self.spdY = 0;	
-
-
-
 	}
 	
 	self.getInitPack = function(){
@@ -290,13 +257,14 @@ Player.onConnect = function(socket){
 	});
 
 
-	
+
 
 
 	socket.emit('init',{
 		player:Player.getAllInitPack(),
 		bullet:Bullet.getAllInitPack(),
-		serverArray:howIsTheMap(),
+		serverArray:array2D,
+		tile:Tile.getAllInitPack(),
 	});
 
 
@@ -400,9 +368,24 @@ var destroy = function(x, y, explodeLength){
 	}
 }
 function changeMap(data){
-	array2D[data.y][data.x] = 0;
+	// array2D[data.y][data.x] = 0;
+
+	for(var i in Tile.list) {
+		var t = Tile.list[i];
+		if(t.gridX === data.x && t.gridY === data.y){
+			array2D[data.y][data.x] = 0;
+			removePack.tile.push(t.id);
+			delete Tile.list[i];
+		}
+	}
 
 }
+
+		// if(Tile.List[i].gridX === data.x && Tile.List[i].gridY === data.y){
+		// 	var tile = Tile.list[i];
+		// 	removePack.tile.push(tile.id);
+		// 	delete Tile.list[i];
+		// }
 function timedExplotion(data){
 	setTimeout(function(){
 		Explotion(data);
@@ -430,10 +413,6 @@ var Explotion = function(param){
 			gridX:self.gridX,
 			gridY:self.gridY,
 			removeBlock:self.removeBlock,
-			// timer:self.timer,
-			// explosionCords:self.explosionCords,
-			// burnTime:self.burnTime,
-
 		};
 	}
 	self.getUpdatePack = function(){
@@ -447,7 +426,6 @@ var Explotion = function(param){
 	initPack.explotion.push(self.getInitPack());
 	return self;
 
-
 }
 Explotion.list = {};
 
@@ -460,11 +438,6 @@ Explotion.update = function(){
 			delete Explotion.list[i];
 			removePack.explotion.push(explotion.id);
 		}
-
-		// if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
-		// 	delete Bullet.list[i];
-		// 	removePack.bullet.push(bullet.id);
-		// } else
 		pack.push(explotion.getUpdatePack());		
 	}
 	return pack;
@@ -485,17 +458,7 @@ var Bomb = function(param){
 					self.y,
 					self.explodeLength
 					);
-		// Explotion({
-		// 			x:self.x,
-		// 			y:self.y,
-		// 			explodeLength:self.explodeLength,
-		// 			});
-
 	}, self.fuse);
-
-	// self.explosionCords = destroy(self.x, self.y, self.explodeLength);
-
-
 
 	self.getInitPack = function(){
 		return {
@@ -518,7 +481,6 @@ var Bomb = function(param){
 	Bomb.list[self.id] = self;
 	initPack.bomb.push(self.getInitPack());
 	return self;
-
 }
 Bomb.list = {};
 
@@ -540,6 +502,37 @@ Bomb.update = function(){
 	}
 	return pack;
 }
+
+var Tile = function(param){
+	var self = {};
+	self.id = Math.random();
+	self.gridX = param.gridX;
+	self.gridY = param.gridY;
+	self.type = param.type;
+	self.toRemove = false;
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			gridX:self.gridX,
+			gridY:self.gridY,	
+			type:self.type,
+		};		
+	}
+
+	Tile.list[self.id] = self;
+	initPack.tile.push(self.getInitPack());
+	return self;
+}
+Tile.list = {};
+
+Tile.getAllInitPack = function(){
+	var tiles = [];
+	for(var i in Tile.list)
+		tiles.push(Tile.list[i].getInitPack());
+	return tiles;
+}
+
 
 var Bullet = function(param){
 	var self = Entity(param);
@@ -697,8 +690,24 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D};
-var removePack = {player:[],bullet:[], bomb:[], explotion:[]};
+var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D, tile:[]};
+var removePack = {player:[],bullet:[], bomb:[], explotion:[], tile:[]};
+
+function initMap() {
+	for (var i = 0; i < array2D[0].length; i++) {
+		for (var j = 0; j < array2D.length; j++) {
+			if (array2D[i][j] === 1) {
+				Tile({gridX:j, gridY:i, type:1,});
+			} else if(array2D[i][j] === 2){
+				Tile({gridX:j, gridY:i, type:2,});
+			}
+		}
+	}
+}
+
+initMap();
+
+
 
 
 setInterval(function(){
@@ -719,10 +728,12 @@ setInterval(function(){
 	initPack.bullet = [];
 	initPack.bomb = [];
 	initPack.explotion = [];
+
 	removePack.player = [];
 	removePack.bullet = [];
 	removePack.bomb = [];
 	removePack.explotion = [];
+	removePack.tile = [];
 	
 },1000/25);
 

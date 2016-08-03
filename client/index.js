@@ -272,7 +272,10 @@
 
 
 			// var draw = setTimeout(function(){
+				if(initPack.removeBlock){
+					array2D[data.y][data.x] = 0;
 
+				}
 				self.obj = new PIXI.Sprite.fromImage('/client/img/explosion.png');
 				self.obj.position.x = initPack.gridX * TILE_SIZE;
 				self.obj.position.y = initPack.gridY * TILE_SIZE;
@@ -281,7 +284,7 @@
 			// }, initPack.timer);
 
 
-			
+
 			// var i = 0;
 
 			// var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');

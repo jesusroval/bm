@@ -271,14 +271,17 @@
 			self.y = initPack.y;
 
 
-			var draw = setTimeout(function(){
+			// var draw = setTimeout(function(){
 
 				self.obj = new PIXI.Sprite.fromImage('/client/img/explosion.png');
 				self.obj.position.x = initPack.gridX * TILE_SIZE;
 				self.obj.position.y = initPack.gridY * TILE_SIZE;
 				stage.addChild(self.obj);
 
-			}, initPack.timer);
+			// }, initPack.timer);
+
+
+			
 			// var i = 0;
 
 			// var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');

@@ -318,21 +318,44 @@ var destroy = function(x, y, explodeLength){
 	var cord = [];
 	var timer = 0;
 
-	Explotion({x:gridX, y:gridY, timer:timer});
+	Explotion({x:gridX, y:gridY});
 
-	timer = 105
+	timer = 100;
 
-	for (var i = 1; i < explodeLength + 1; i++) {
 
-		Explotion({x:(gridX + i), y:gridY, timer:(timer*i)});
 
-		Explotion({x:gridX, y:(gridY + i), timer:(timer*i)});
 
-		Explotion({x:gridX, y:(gridY - i), timer:(timer*i)});
 
-		Explotion({x:(gridX - i), y:gridY, timer:(timer*i)});
+	for (var i = 1; i < (explodeLength + 1); i++) {
+		timedExplotion({x:(gridX + i), y:gridY, timer:timer*i});
+		timedExplotion({x:gridX, y:(gridY + i), timer:timer*i});
+		timedExplotion({x:gridX, y:(gridY - i), timer:timer*i});
+		timedExplotion({x:(gridX - i), y:gridY, timer:timer*i});
+
+		// setTimeout(function(i){
+		// 		Explotion({x:(gridX + i), y:gridY});
+		// 	}, timer*i);
+
+		// setTimeout(function(i){
+		// 		Explotion({x:gridX, y:(gridY + i)});
+		// 	}, timer*i);
+
+		// setTimeout(function(i){
+		// 		Explotion({x:gridX, y:(gridY - i)});
+		// 	}, timer*i);
+
+		// setTimeout(function(i){
+		// 		Explotion({x:(gridX - i), y:gridY});
+		// 	}, timer*i);
+		
 	}
 
+}
+
+function timedExplotion(data){
+	setTimeout(function(){
+		Explotion(data);		
+	}, data.timer);
 }
 var Explotion = function(param){
 	var self = Entity(param);
@@ -341,8 +364,8 @@ var Explotion = function(param){
 	self.gridY = param.y;
 	self.id = Math.random();
 	self.toRemove;
-	self.burnTime = 500;
-	self.timer = param.timer;
+	self.burnTime = 400;
+	// self.timer = param.timer;
 	// self.explosionCords = destroy(self.x, self.y, param.explodeLength);
 
 	self.explodeFunc = setTimeout(function() { 	
@@ -354,7 +377,7 @@ var Explotion = function(param){
 			id:self.id,
 			gridX:self.gridX,
 			gridY:self.gridY,
-			timer:self.timer,
+			// timer:self.timer,
 			// explosionCords:self.explosionCords,
 			// burnTime:self.burnTime,
 

@@ -18,6 +18,9 @@
 	var bombArray = [];
 	var oldX;
 	var oldY;
+
+	var explotionOffSetX = 24; 
+	var explotionOffSetY = 28;
 	//sign
 	var signDiv = document.getElementById('signDiv');
 	var signDivUsername = document.getElementById('signDiv-username');
@@ -226,56 +229,99 @@
 			return self;
 		}
 		Player.list = {};
-		var explode = function(self){
-			var gridX = Math.floor((self.x + 24) / TILE_SIZE);
-			var gridY = Math.floor((self.y + 28) / TILE_SIZE);
+		// var explode = function(self){
+		// 	var gridX = Math.floor((self.x + explotionOffSetX) / TILE_SIZE);
+		// 	var gridY = Math.floor((self.y + explotionOffSetY) / TILE_SIZE);
 
-			var objects = [];
+		// 	var objects = [];
 
-			var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			rightFire.position.x = (gridX + 1) * TILE_SIZE;
-			rightFire.position.y = gridY * TILE_SIZE;
-			stage.addChild(rightFire);
-			objects.push(rightFire);
+		// 	var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+		// 	rightFire.position.x = (gridX + 1) * TILE_SIZE;
+		// 	rightFire.position.y = gridY * TILE_SIZE;
+		// 	stage.addChild(rightFire);
+		// 	objects.push(rightFire);
 
-			var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			leftFire.position.x = gridX * TILE_SIZE;
-			leftFire.position.y = (gridY +1) * TILE_SIZE;
-			leftFire.rotation = Math.PI;
-			stage.addChild(leftFire);
-			objects.push(leftFire);
+		// 	var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+		// 	leftFire.position.x = gridX * TILE_SIZE;
+		// 	leftFire.position.y = (gridY +1) * TILE_SIZE;
+		// 	leftFire.rotation = Math.PI;
+		// 	stage.addChild(leftFire);
+		// 	objects.push(leftFire);
 
-			var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			topFire.position.x = gridX * TILE_SIZE;
-			topFire.position.y = gridY * TILE_SIZE;
-			topFire.rotation = Math.PI * 1.5;
-			stage.addChild(topFire);
-			objects.push(topFire);
+		// 	var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+		// 	topFire.position.x = gridX * TILE_SIZE;
+		// 	topFire.position.y = gridY * TILE_SIZE;
+		// 	topFire.rotation = Math.PI * 1.5;
+		// 	stage.addChild(topFire);
+		// 	objects.push(topFire);
 
-			var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			bottomFire.position.x = (gridX + 1) * TILE_SIZE;
-			bottomFire.position.y = (gridY + 1) * TILE_SIZE;
-			bottomFire.rotation = Math.PI * 0.5;
-			stage.addChild(bottomFire);
-			objects.push(bottomFire);
+		// 	var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
+		// 	bottomFire.position.x = (gridX + 1) * TILE_SIZE;
+		// 	bottomFire.position.y = (gridY + 1) * TILE_SIZE;
+		// 	bottomFire.rotation = Math.PI * 0.5;
+		// 	stage.addChild(bottomFire);
+		// 	objects.push(bottomFire);
 
-			return objects;
-		}
+		// 	return objects;
+		// }
 		var Explotion = function(initPack){
 			var self = {};
 			self.id = initPack.id;
 			self.x = initPack.x;
 			self.y = initPack.y;
 
+			var i = 0;
 
+			var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');
 
-			self.objects = explode(self);
+			first.position.x = initPack.explosionCords[0].x * TILE_SIZE;
+			first.position.y = initPack.explosionCords[0].y * TILE_SIZE;
+			stage.addChild(first);
+
+			i+=1;
+
+			var myVar = setInterval( function(){
+				explode(initPack,i);
+				i +=4;
+				if(i >= initPack.explosionCords.length){
+					clearInterval(myVar);
+				}
+			}, initPack.burnTime);
+			
+
 
 
 			Explotion.list[self.id] = self;		
 			return self;
 		}
 		Explotion.list = {};	
+
+		var explode = function(initPack, i) {
+
+
+				var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+				temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
+				temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
+				stage.addChild(temp);
+
+				var temp2 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+				temp2.position.x = initPack.explosionCords[i+1].x * TILE_SIZE;
+				temp2.position.y = initPack.explosionCords[i+1].y * TILE_SIZE;
+				stage.addChild(temp2);
+
+				var temp3 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+				temp3.position.x = initPack.explosionCords[i+2].x * TILE_SIZE;
+				temp3.position.y = initPack.explosionCords[i+2].y * TILE_SIZE;
+				stage.addChild(temp3);
+
+				var temp4 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+				temp4.position.x = initPack.explosionCords[i+3].x * TILE_SIZE;
+				temp4.position.y = initPack.explosionCords[i+3].y * TILE_SIZE;
+				stage.addChild(temp4);
+
+
+		
+		}
 
 		var Bomb = function(initPack){
 			var self = {};
@@ -288,6 +334,59 @@
 			self.obj.y = initPack.y + 20;
 			stage.addChild(self.obj);
 
+
+			
+
+			// for (var i = 0; i < initPack.explosionCords.length; i+=4) {
+			// 	var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			// 	temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
+			// 	temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
+			// 	stage.addChild(temp);
+
+			// 	var temp2 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			// 	temp2.position.x = initPack.explosionCords[i+1].x * TILE_SIZE;
+			// 	temp2.position.y = initPack.explosionCords[i+1].y * TILE_SIZE;
+			// 	stage.addChild(temp2);
+
+			// 	var temp3 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			// 	temp3.position.x = initPack.explosionCords[i+2].x * TILE_SIZE;
+			// 	temp3.position.y = initPack.explosionCords[i+2].y * TILE_SIZE;
+			// 	stage.addChild(temp3);
+
+			// 	var temp4 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			// 	temp4.position.x = initPack.explosionCords[i+3].x * TILE_SIZE;
+			// 	temp4.position.y = initPack.explosionCords[i+3].y * TILE_SIZE;
+			// 	stage.addChild(temp4);
+			// }
+
+			//gör fyra i smällen, for loop , i plus lika med 4
+
+
+			// var i = 0;
+
+			// var loopfunc = function(i){
+			// 	setTimeout(function() {
+
+			// 		var inside = function(i){
+			// 			var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			// 			temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
+			// 			temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
+			// 			stage.addChild(temp);
+			// 			i += 1;
+
+			// 			if (i%4) {
+			// 				loopfunc(i);
+			// 			} else{
+			// 				inside(i);
+			// 			}						
+			// 		}
+
+			// 		inside(i);
+
+			// 	}, 30);
+			// }
+
+			// loopfunc(i);
 
 			Bomb.list[self.id] = self;		
 			return self;
@@ -351,8 +450,7 @@
 			if(data.bomb){
 				for (var i = 0; i < data.bomb.length; i++) {
 					new Bomb(data.bomb[i]);
-				}
-				
+				}				
 			}
 			if(data.serverArray && !map){				
 				array2D = data.serverArray;

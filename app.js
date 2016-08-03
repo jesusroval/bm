@@ -316,27 +316,34 @@ var destroy = function(x, y, explodeLength){
 	var gridY = Math.floor((y + explotionOffSetY) / TILE_SIZE);
 
 	var cord = [];
+	var timer = 0;
 
-	cord.push({x:gridX, y:gridY});
+	Explotion({x:gridX, y:gridY, timer:timer});
+
+	timer = 105
 
 	for (var i = 1; i < explodeLength + 1; i++) {
 
-		cord.push({x:(gridX + i), y:gridY});
+		Explotion({x:(gridX + i), y:gridY, timer:(timer*i)});
 
-		cord.push({x:gridX, y:(gridY + i)});
+		Explotion({x:gridX, y:(gridY + i), timer:(timer*i)});
 
-		cord.push({x:gridX, y:(gridY - i)});
+		Explotion({x:gridX, y:(gridY - i), timer:(timer*i)});
 
-		cord.push({x:(gridX - i), y:gridY});
+		Explotion({x:(gridX - i), y:gridY, timer:(timer*i)});
 	}
-	return cord;
+
 }
 var Explotion = function(param){
 	var self = Entity(param);
+
+	self.gridX = param.x;
+	self.gridY = param.y;
 	self.id = Math.random();
 	self.toRemove;
-	self.burnTime = 105;
-	self.explosionCords = destroy(self.x, self.y, param.explodeLength);
+	self.burnTime = 500;
+	self.timer = param.timer;
+	// self.explosionCords = destroy(self.x, self.y, param.explodeLength);
 
 	self.explodeFunc = setTimeout(function() { 	
 		self.toRemove = true;
@@ -345,10 +352,11 @@ var Explotion = function(param){
 	self.getInitPack = function(){
 		return {
 			id:self.id,
-			x:self.x,
-			y:self.y,
-			explosionCords:self.explosionCords,
-			burnTime:self.burnTime,
+			gridX:self.gridX,
+			gridY:self.gridY,
+			timer:self.timer,
+			// explosionCords:self.explosionCords,
+			// burnTime:self.burnTime,
 
 		};
 	}
@@ -390,17 +398,22 @@ var Bomb = function(param){
 	var self = Entity(param);
 	self.id = Math.random();
 	self.toRemove;
-	self.fuse = 2000;
+	self.fuse = 1000;
 	self.explode = false;
 	self.explodeLength = 2;
 
 	self.explodeFunc = setTimeout(function() { 
 		self.toRemove = true;
-		Explotion({
-					x:self.x,
-					y:self.y,
-					explodeLength:self.explodeLength,
-					});
+		destroy(
+					self.x,
+					self.y,
+					self.explodeLength
+					);
+		// Explotion({
+		// 			x:self.x,
+		// 			y:self.y,
+		// 			explodeLength:self.explodeLength,
+		// 			});
 
 	}, self.fuse);
 

@@ -270,23 +270,32 @@
 			self.x = initPack.x;
 			self.y = initPack.y;
 
-			var i = 0;
 
-			var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+			var draw = setTimeout(function(){
 
-			first.position.x = initPack.explosionCords[0].x * TILE_SIZE;
-			first.position.y = initPack.explosionCords[0].y * TILE_SIZE;
-			stage.addChild(first);
+				self.obj = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+				self.obj.position.x = initPack.gridX * TILE_SIZE;
+				self.obj.position.y = initPack.gridY * TILE_SIZE;
+				stage.addChild(self.obj);
 
-			i+=1;
+			}, initPack.timer);
+			// var i = 0;
 
-			var myVar = setInterval( function(){
-				explode(initPack,i);
-				i +=4;
-				if(i >= initPack.explosionCords.length){
-					clearInterval(myVar);
-				}
-			}, initPack.burnTime);
+			// var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');
+
+			// first.position.x = initPack.explosionCords[0].x * TILE_SIZE;
+			// first.position.y = initPack.explosionCords[0].y * TILE_SIZE;
+			// stage.addChild(first);
+
+			// i+=1;
+
+			// var myVar = setInterval( function(){
+			// 	explode(initPack,i);
+			// 	i +=4;
+			// 	if(i >= initPack.explosionCords.length){
+			// 		clearInterval(myVar);
+			// 	}
+			// }, initPack.burnTime);
 			
 
 
@@ -603,9 +612,10 @@
 			}
 			for (var i = 0; i < data.explotion.length; i++) {
 				var e = Explotion.list[data.explotion[i]];
-				for (var i = 0; i < e.objects.length; i++) {
-					stage.removeChild(e.objects[i]);
-				}
+				// for (var i = 0; i < e.objects.length; i++) {
+				// 	stage.removeChild(e.objects[i]);
+				// }
+				stage.removeChild(e.obj);
 				delete Explotion.list[data.explotion[i]];
 			}
 			// for(var i = 0 ; i < data.bullet.length; i++){

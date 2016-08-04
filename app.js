@@ -454,10 +454,10 @@ var Explotion = function(param){
 		}
 
 	function died(player){
-		player.gridX = 0;
-		player.gridY = 0;
-		player.x = 0;
-		player.y = 0;
+		player.gridX = 66;
+		player.gridY = 66;
+		player.x = 1666;
+		player.y = 1666;
 		player.hp = player.hpMax;
 
 		setTimeout(function() {

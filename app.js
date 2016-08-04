@@ -31,15 +31,15 @@ var explotionOffSetY = 28;
 // }
 
 	var array =[1,1,1,1,1,1,1,1,1,1,1,
-				1,0,0,0,2,0,0,0,2,0,1,
-				1,0,1,0,1,0,1,0,1,2,1,
+				1,0,0,0,2,0,0,0,2,3,1,
+				1,0,1,3,1,0,1,0,1,2,1,
 				1,0,0,2,0,0,2,0,2,0,1,
 				1,2,1,2,1,0,1,0,1,0,1,
 				1,0,0,2,0,2,0,0,0,0,1,
 				1,2,1,0,1,2,1,2,1,0,1,
-				1,0,0,0,2,2,0,0,2,0,1,
+				1,0,0,0,2,3,2,0,2,0,1,
 				1,0,1,0,1,2,1,0,1,0,1,
-				1,0,0,0,0,2,2,0,0,0,1,				
+				1,3,0,0,0,2,2,0,0,3,1,				
 				1,1,1,1,1,1,1,1,1,1,1,
 				];
 
@@ -128,6 +128,7 @@ var Player = function(param){
 	self.x = 70;
 	self.y = 70;
 	self.killed = false;
+	self.explodeLength = 1;
 	
 	var super_update = self.update;
 	self.update = function(){
@@ -142,7 +143,8 @@ var Player = function(param){
 		if(self.dropBomb){
 			Bomb(
 				{x:self.x,
-				y:self.y});
+				y:self.y,
+				explodeLength:self.explodeLength});
 			self.dropBomb = false;
 		}
 
@@ -199,6 +201,18 @@ var Player = function(param){
 			self.y += TILE_SIZE;
 			self.gridY += 1;
 		}
+
+		for(var i in PowerUp.list){
+			var pU = PowerUp.list[i];
+			if(pU.gridX === self.gridX && pU.gridY === self.gridY){
+
+				self.explodeLength += 1;
+				console.log(array2D[pU.gridY][pU.gridX]);
+				delete PowerUp.list[i];
+				removePack.powerUp.push(pU.id);
+				array2D[pU.gridY][pU.gridX] = 0;	
+			}
+		}		
 			self.pressingLeft = false;
 			self.pressingRight = false;
 			self.pressingUp = false;
@@ -318,6 +332,34 @@ Player.update = function(){
 	}
 	return pack;
 }
+
+function checkImpact(data){
+
+
+	if (data.y > 0 && data.y < 12 && data.x > 0 && data.x < 12) {
+		var mapGrid = array2D[data.y][data.x];
+
+		if (data.hit || mapGrid === 1) {
+			data.hit = true;
+		} else if(mapGrid === 2){
+			data.removeBlock = true;
+			data.hit = true;
+			changeMap(data);
+		} else if(mapGrid === 3){
+			data.powerUp = 'bombUp';
+			data.removeBlock = true;
+			data.hit = true;
+			changeMap(data);
+		}
+
+		if(!data.hit){
+			timedExplotion(data);	
+		}
+
+		return(data.hit);
+	}
+}
+
 var destroy = function(x, y, explodeLength){
 	var gridX = Math.floor((x + explotionOffSetX) / TILE_SIZE);
 	var gridY = Math.floor((y + explotionOffSetY) / TILE_SIZE);
@@ -336,65 +378,24 @@ var destroy = function(x, y, explodeLength){
 	var upHit = false;
 	var bottomHit = false;
 
+	console.log('destroy ' + explodeLength);
+
+	var right = {x:(gridX + i), y:gridY, timer:timer*i, removeBlock:false, hit: false,};
+	var down = {x:gridX, y:(gridY + i), timer:timer*i, removeBlock:false, hit: false,};
+	var up = {x:gridX, y:(gridY - i), timer:timer*i, removeBlock:false, hit: false,};
+	var left = {x:(gridX - i), y:gridY, timer:timer*i, removeBlock:false, hit: false,};	
+
+
 
 	for (var i = 1; i < (explodeLength + 1); i++) {
-
-		var right = {x:(gridX + i), y:gridY, timer:timer*i, removeBlock:false};
-		if (rightHit || array2D[right.y][right.x] === 1) {
-			rightHit = true;
-		} else if(array2D[right.y][right.x] === 2){
-			right.removeBlock = true;
-			rightHit = true;
-			changeMap(right);
-	
-		}
-
-		if(!rightHit){
-			timedExplotion(right);	
-		}
-
-
-		var up = {x:gridX, y:(gridY + i), timer:timer*i, removeBlock:false};
-		if (upHit || array2D[up.y][up.x] === 1) {
-			upHit = true;
-		} else if(array2D[up.y][up.x] === 2){
-			up.removeBlock = true;
-			upHit = true;
-			changeMap(up);
-
-		}	
-
-		if(!upHit){	
-			timedExplotion(up);
-		}
-
-		var bottom = {x:gridX, y:(gridY - i), timer:timer*i, removeBlock:false}
-		if (bottomHit || array2D[bottom.y][bottom.x] === 1) {
-			bottomHit = true;
-		} else if(array2D[bottom.y][bottom.x] === 2){
-			bottom.removeBlock = true;
-			bottomHit = true;
-			changeMap(bottom);
-
-		}
-
-		if(!bottomHit){	
-			timedExplotion(bottom);
-		}
-
-
-		var left = {x:(gridX - i), y:gridY, timer:timer*i, removeBlock:false}
-		if (leftHit || array2D[left.y][left.x] === 1) {
-			leftHit = true;
-		} else if(array2D[left.y][left.x] === 2){
-			left.removeBlock = true;
-			leftHit = true;
-			changeMap(left);
-		}
-
-		if(!leftHit){	
-			timedExplotion(left);
-		}		
+		if(!rightHit)
+		rightHit = checkImpact({x:(gridX + i), y:gridY, timer:timer*i, removeBlock:false, hit: false,});
+		if(!bottomHit)
+		bottomHit = checkImpact({x:gridX, y:(gridY + i), timer:timer*i, removeBlock:false, hit: false,});
+		if(!upHit)
+		upHit = checkImpact({x:gridX, y:(gridY - i), timer:timer*i, removeBlock:false, hit: false,});
+		if(!leftHit)
+		leftHit = checkImpact({x:(gridX - i), y:gridY, timer:timer*i, removeBlock:false, hit: false,});	
 	}
 }
 function changeMap(data){
@@ -406,9 +407,13 @@ function changeMap(data){
 			var t = Tile.list[i];
 			if(t.gridX === data.x && t.gridY === data.y){
 
-					array2D[data.y][data.x] = 0;
-					delete Tile.list[i];
-					removePack.tile.push(t.id);				
+				if(data.powerUp){
+					PowerUp({gridX:t.gridX, gridY:t.gridY, type:data.powerUp})
+				}
+
+				array2D[data.y][data.x] = 0;
+				delete Tile.list[i];
+				removePack.tile.push(t.id);				
 			}
 		}
 
@@ -429,6 +434,44 @@ function timedExplotion(data){
 		Explotion(data);
 	}, data.timer);
 }
+var PowerUp = function(param){
+	var self = Entity(param);
+
+	self.gridX = param.gridX;
+	self.gridY = param.gridY;
+	self.id = Math.random();
+	self.type = param.type;
+	self.burnTime = 10000;
+	self.toRemove = false;
+
+	setTimeout(function() {
+		delete Bullet.list[self];
+		removePack.powerUp.push(self.id);
+	}, self.burnTime);
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			gridX:self.gridX,
+			gridY:self.gridY,
+			type:self.type,
+		};
+	}	
+
+	PowerUp.list[self.id] = self;
+	initPack.powerUp.push(self.getInitPack());
+	return self;
+}
+PowerUp.list = {};
+
+PowerUp.getAllInitPack = function(){
+	var powerUps = [];
+	for(var i in PowerUp.list){
+		powerUps.push(PowerUp.list[i].getInitPack());
+	}
+	return powerUps;
+}
+
 var Explotion = function(param){
 	var self = Entity(param);
 
@@ -459,6 +502,7 @@ var Explotion = function(param){
 		player.x = 1666;
 		player.y = 1666;
 		player.hp = player.hpMax;
+		player.explodeLength = 1;
 
 		setTimeout(function() {
 			player.gridX = 1;
@@ -516,7 +560,7 @@ var Bomb = function(param){
 	self.toRemove;
 	self.fuse = 1000;
 	self.explode = false;
-	self.explodeLength = 2;
+	self.explodeLength = param.explodeLength;
 
 	self.explodeFunc = setTimeout(function() { 
 		self.toRemove = true;
@@ -760,8 +804,8 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D, tile:[]};
-var removePack = {player:[],bullet:[], bomb:[], explotion:[], tile:[]};
+var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[]};
+var removePack = {player:[],bullet:[], bomb:[], explotion:[], tile:[], powerUp:[]};
 
 function initMap() {
 	for (var i = 0; i < array2D[0].length; i++) {
@@ -770,6 +814,8 @@ function initMap() {
 				Tile({gridX:j, gridY:i, type:1,});
 			} else if(array2D[i][j] === 2){
 				Tile({gridX:j, gridY:i, type:2,});
+			} else if(array2D[i][j] === 3){
+				Tile({gridX:j, gridY:i, type:3,});
 			}
 		}
 	}
@@ -800,12 +846,14 @@ setInterval(function(){
 	initPack.bomb = [];
 	initPack.explotion = [];
 	initPack.tile = [];
+	initPack.powerUp = [];
 
 	removePack.player = [];
 	removePack.bullet = [];
 	removePack.bomb = [];
 	removePack.explotion = [];
 	removePack.tile = [];
+	removePack.powerUp = [];
 	
 },1000/25);
 

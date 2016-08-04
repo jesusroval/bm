@@ -291,6 +291,27 @@
 
 		// 	return objects;
 		// }
+		var PowerUp = function(initPack){
+			var self = {};
+
+			self.gridX = initPack.gridX;
+			self.gridY = initPack.gridY;
+			self.id = initPack.id;
+			self.type = initPack.type;
+
+			if(self.type === 'bombUp'){
+				self.obj = new PIXI.Sprite.fromImage('/client/img/Fireupsprite.png');
+				self.obj.position.x = (initPack.gridX * TILE_SIZE) + 16;
+				self.obj.position.y = (initPack.gridY * TILE_SIZE) + 16;
+				stage.addChild(self.obj);				
+			}
+
+
+			PowerUp.list[self.id] = self;		
+			return self;
+		}
+		PowerUp.list = {};	
+
 		var Explotion = function(initPack){
 			var self = {};
 			self.id = initPack.id;
@@ -369,7 +390,7 @@
 
 			if(initPack.type === 1){
 				self.obj = new PIXI.Sprite.fromImage('/client/img/grid.png');
-			} else if(initPack.type === 2){
+			} else if(initPack.type > 1){
 				self.obj = new PIXI.Sprite.fromImage('/client/img/stone.png');
 			}
 
@@ -436,6 +457,12 @@
 			// 	map = true;
 			// 	console.log(data.tile.length +  ' tile init');		
 			// }
+
+			if (data.powerUp) {
+				for (var i = 0; i < data.powerUp.length; i++) {
+					new PowerUp(data.powerUp[i]);
+				}				
+			}
 
 			if(data.explotion)
 			{
@@ -583,6 +610,14 @@
 				delete Tile.list[data.tile[i]];
 				// array2D[data.tile.gridY][data.tile.gridX] = 0;
 			}
+
+			for (var i = 0; i < data.powerUp.length; i++) {
+				var pU = PowerUp.list[data.powerUp[i]];
+
+				stage.removeChild(pU.obj);
+				delete PowerUp.list[powerUp.bomb[i]];
+
+			}			
 			// for(var i = 0 ; i < data.bullet.length; i++){
 			// 	var b = Bullet.list[data.bullet[i]];
 			// 	stage.removeChild(b.obj);

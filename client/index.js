@@ -402,12 +402,13 @@
 
 		socket.on('init',function(data){
 			
-			if(data.tile && !map){
-				for (var i = 0; i < data.tile.length; i++) {
-					new Tile(data.tile[i]);
-				}
-				map = true;		
-			}
+			// if(data.tile.length > 0 && !map){
+			// 	for (var i = 0; i < data.tile.length; i++) {
+			// 		new Tile(data.tile[i]);
+			// 	}
+			// 	map = true;
+			// 	console.log(data.tile.length +  ' tile init');		
+			// }
 
 			if(data.explotion)
 			{
@@ -507,6 +508,15 @@
 			// 		stage.removeChild(b.obj);
 			// 	}
 			// }
+
+			if(data.tile.length > 0 && !map){
+				for (var i = 0; i < data.tile.length; i++) {
+					new Tile(data.tile[i]);
+				}
+				map = true;
+				console.log(data.tile.length +  ' tile init/UPDATE');		
+			}
+
 			for(var i = 0 ; i < data.player.length; i++){
 				var pack = data.player[i];
 				var p = Player.list[pack.id];
@@ -582,7 +592,7 @@
 				var t = Tile.list[data.tile[i]];
 				stage.removeChild(t.obj);
 				delete Tile.list[data.tile[i]];
-				array2D[data.tile.gridY][data.tile.gridX] = 0;
+				// array2D[data.tile.gridY][data.tile.gridX] = 0;
 			}
 			// for(var i = 0 ; i < data.bullet.length; i++){
 			// 	var b = Bullet.list[data.bullet[i]];

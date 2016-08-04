@@ -33,7 +33,7 @@ var explotionOffSetY = 28;
 	var array =[1,1,1,1,1,1,1,1,1,1,1,
 				1,0,0,0,2,0,0,0,2,0,1,
 				1,0,1,0,1,0,1,0,1,2,1,
-				1,0,0,2,0,0,0,0,0,0,1,
+				1,0,0,2,0,0,2,0,2,0,1,
 				1,2,1,2,1,0,1,0,1,0,1,
 				1,0,0,2,0,2,0,0,0,0,1,
 				1,2,1,0,1,2,1,2,1,0,1,
@@ -238,6 +238,14 @@ Player.onConnect = function(socket){
 		id:socket.id,
 		map:map,
 	});
+
+	var wtf = Tile.getAllInitPack();
+
+	socket.emit('init',{
+		player:Player.getAllInitPack(),
+		tile: wtf,
+	});
+
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
 			player.pressingLeft = data.state;
@@ -260,12 +268,7 @@ Player.onConnect = function(socket){
 
 
 
-	socket.emit('init',{
-		player:Player.getAllInitPack(),
-		bullet:Bullet.getAllInitPack(),
-		serverArray:array2D,
-		tile:Tile.getAllInitPack(),
-	});
+
 
 
 
@@ -319,6 +322,7 @@ var destroy = function(x, y, explodeLength){
 			right.removeBlock = true;
 			rightHit = true;
 			changeMap(right);
+	
 		}
 
 		if(!rightHit){
@@ -333,6 +337,7 @@ var destroy = function(x, y, explodeLength){
 			up.removeBlock = true;
 			upHit = true;
 			changeMap(up);
+
 		}	
 
 		if(!upHit){	
@@ -346,6 +351,7 @@ var destroy = function(x, y, explodeLength){
 			bottom.removeBlock = true;
 			bottomHit = true;
 			changeMap(bottom);
+
 		}
 
 		if(!bottomHit){	
@@ -369,15 +375,23 @@ var destroy = function(x, y, explodeLength){
 }
 function changeMap(data){
 	// array2D[data.y][data.x] = 0;
+	setTimeout(function(){
+	var count = 0
+		for(var i in Tile.list) {
+			count+=1;
+			var t = Tile.list[i];
+			if(t.gridX === data.x && t.gridY === data.y){
 
-	for(var i in Tile.list) {
-		var t = Tile.list[i];
-		if(t.gridX === data.x && t.gridY === data.y){
-			array2D[data.y][data.x] = 0;
-			removePack.tile.push(t.id);
-			delete Tile.list[i];
+					array2D[data.y][data.x] = 0;
+					delete Tile.list[i];
+					removePack.tile.push(t.id);				
+			}
 		}
-	}
+
+	console.log(count +  ' after remove, changemap');
+	}, data.timer);
+
+
 
 }
 
@@ -527,9 +541,12 @@ var Tile = function(param){
 Tile.list = {};
 
 Tile.getAllInitPack = function(){
+	var counts = 0;
 	var tiles = [];
-	for(var i in Tile.list)
+	for(var i in Tile.list){
+		counts+=1;
 		tiles.push(Tile.list[i].getInitPack());
+	}
 	return tiles;
 }
 
@@ -716,6 +733,7 @@ setInterval(function(){
 		bullet:Bullet.update(),
 		bomb:Bomb.update(),
 		explotion:Explotion.update(),
+		tile:Tile.getAllInitPack(),
 	}
 	
 	for(var i in SOCKET_LIST){
@@ -728,6 +746,7 @@ setInterval(function(){
 	initPack.bullet = [];
 	initPack.bomb = [];
 	initPack.explotion = [];
+	initPack.tile = [];
 
 	removePack.player = [];
 	removePack.bullet = [];

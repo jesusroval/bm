@@ -173,27 +173,33 @@
 			self.obj.y = 100;
 			stage.addChild(self.obj);
 
-			//Create the health bar
-			self.healthBar = new PIXI.Container();
-			self.healthBar.position.x = self.x;
-			self.healthBar.position.y = self.y;
-			stage.addChild(self.healthBar);
+			// working but have instant death
+			// //Create the health bar
+			// self.healthBar = new PIXI.Container();
+			// self.healthBar.position.x = self.x;
+			// self.healthBar.position.y = self.y;
+			// stage.addChild(self.healthBar);
 
-			//Create the black background rectangle
-			var innerBar = new PIXI.Graphics();
-			innerBar.beginFill(0x000000);
-			innerBar.drawRect(0, 0, 32, 4);
-			innerBar.endFill();
-			self.healthBar.addChild(innerBar);
+			// //Create the black background rectangle
+			// var innerBar = new PIXI.Graphics();
+			// innerBar.beginFill(0x000000);
+			// innerBar.drawRect(0, 0, 32, 4);
+			// innerBar.endFill();
+			// self.healthBar.addChild(innerBar);
 
-			//Create the front red rectangle
-			var outerBar = new PIXI.Graphics();
-			outerBar.beginFill(0xFF3300);
-			outerBar.drawRect(0, 0, 32, 4);
-			outerBar.endFill();
-			self.healthBar.addChild(outerBar);
+			// //Create the front red rectangle
+			// var outerBar = new PIXI.Graphics();
+			// outerBar.beginFill(0xFF3300);
+			// outerBar.drawRect(0, 0, 32, 4);
+			// outerBar.endFill();
+			// self.healthBar.addChild(outerBar);
 
-			self.healthBar.outer = outerBar;
+			// self.healthBar.outer = outerBar;
+
+
+
+
+
 			// var testArray = [];
 			// for (var i = 0; i < 4; i++) {
 			// 	var test = new PIXI.Sprite.fromImage('/client/img/Untitled.png');
@@ -516,9 +522,10 @@
 						p.obj.y = pack.y;			
 					if(pack.hp !== undefined)
 						p.hp = pack.hp;
-						p.healthBar.width = p.hp * 3.5;
-						p.healthBar.x =pack.x + 8;
-						p.healthBar.y =pack.y - 5;		
+					// working but have instant death
+						// p.healthBar.width = p.hp * 3.5;
+						// p.healthBar.x =pack.x + 8;
+						// p.healthBar.y =pack.y - 5;		
 					if(pack.score !== undefined)
 						p.score = pack.score;
 

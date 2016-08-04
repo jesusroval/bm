@@ -127,6 +127,7 @@ var Player = function(param){
 	self.gridY = 1;
 	self.x = 70;
 	self.y = 70;
+	self.killed = false;
 	
 	var super_update = self.update;
 	self.update = function(){
@@ -144,6 +145,16 @@ var Player = function(param){
 				y:self.y});
 			self.dropBomb = false;
 		}
+
+		// if(self.killed = false){
+		// 	console.log(self.killed);
+		// 	self.gridX = 1;
+		// 	self.gridY = 1;
+		// 	self.x = 70;
+		// 	self.y = 70;
+		// 	self.hp = self.hpMax;
+		// 	self.killed = true;		
+		// }
 	}
 
 	self.shootBullet = function(angle){
@@ -171,21 +182,22 @@ var Player = function(param){
 
 		if(self.pressingRight && !isPositionWall({x:self.x + TILE_SIZE, y:self.y})){
 			self.x += TILE_SIZE;
+			self.gridX += 1;
 
 		}
 		else if(self.pressingLeft && !isPositionWall({x:self.x - TILE_SIZE, y:self.y})){
 			self.x -= TILE_SIZE;
-
+			self.gridX -= 1;
 		}
 
 		
 		if(self.pressingUp && !isPositionWall({x:self.x, y:self.y - TILE_SIZE})){
 			self.y -= TILE_SIZE;
-
+			self.gridY -= 1;
 		}
 		else if(self.pressingDown && !isPositionWall({x:self.x, y:self.y + TILE_SIZE})){
 			self.y += TILE_SIZE;
-
+			self.gridY += 1;
 		}
 			self.pressingLeft = false;
 			self.pressingRight = false;
@@ -428,6 +440,35 @@ var Explotion = function(param){
 	self.removeBlock = param.removeBlock;
 	// self.timer = param.timer;
 	// self.explosionCords = destroy(self.x, self.y, param.explodeLength);
+
+
+		for(var i in Player.list){
+			var player = Player.list[i];
+
+			if (player.gridX === self.gridX && player.gridY === self.gridY) {
+				player.hp -= 10;
+				if(player.hp <= 0){
+					died(player);
+				}
+			}	
+		}
+
+	function died(player){
+		player.gridX = 0;
+		player.gridY = 0;
+		player.x = 0;
+		player.y = 0;
+		player.hp = player.hpMax;
+
+		setTimeout(function() {
+			player.gridX = 1;
+			player.gridY = 1;
+			player.x = 70;
+			player.y = 70;
+			player.hp = player.hpMax;
+		}, 2000);
+	}
+
 
 	self.explodeFunc = setTimeout(function() { 	
 		self.toRemove = true;

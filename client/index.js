@@ -173,6 +173,27 @@
 			self.obj.y = 100;
 			stage.addChild(self.obj);
 
+			//Create the health bar
+			self.healthBar = new PIXI.Container();
+			self.healthBar.position.x = self.x;
+			self.healthBar.position.y = self.y;
+			stage.addChild(self.healthBar);
+
+			//Create the black background rectangle
+			var innerBar = new PIXI.Graphics();
+			innerBar.beginFill(0x000000);
+			innerBar.drawRect(0, 0, 32, 4);
+			innerBar.endFill();
+			self.healthBar.addChild(innerBar);
+
+			//Create the front red rectangle
+			var outerBar = new PIXI.Graphics();
+			outerBar.beginFill(0xFF3300);
+			outerBar.drawRect(0, 0, 32, 4);
+			outerBar.endFill();
+			self.healthBar.addChild(outerBar);
+
+			self.healthBar.outer = outerBar;
 			// var testArray = [];
 			// for (var i = 0; i < 4; i++) {
 			// 	var test = new PIXI.Sprite.fromImage('/client/img/Untitled.png');
@@ -465,49 +486,7 @@
 			console.log(data);
 		});
 
-
-
-
 		socket.on('update',function(data){
-			//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
-
-			// for (var i = 0; i < data.bomb.length; i++) {
-			// 	if(data.bomb[i].explode === true){
-			// 		var pack = data.bomb[i];
-			// 		var b = Bomb.list[pack.id];
-
-			// 		var gridX = Math.floor(b.obj.x / TILE_SIZE);
-			// 		var gridY = Math.floor(b.obj.y / TILE_SIZE);
-
-
-			// 		var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			// 		rightFire.position.x = (gridX + 1) * TILE_SIZE;
-			// 		rightFire.position.y = gridY * TILE_SIZE;
-			// 		stage.addChild(rightFire);
-
-			// 		var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			// 		leftFire.position.x = gridX * TILE_SIZE;
-			// 		leftFire.position.y = (gridY +1) * TILE_SIZE;
-			// 		leftFire.rotation = Math.PI;
-			// 		stage.addChild(leftFire);
-
-			// 		var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			// 		topFire.position.x = gridX * TILE_SIZE;
-			// 		topFire.position.y = gridY * TILE_SIZE;
-			// 		topFire.rotation = Math.PI * 1.5;
-			// 		stage.addChild(topFire);
-
-			// 		var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-			// 		bottomFire.position.x = (gridX + 1) * TILE_SIZE;
-			// 		bottomFire.position.y = (gridY + 1) * TILE_SIZE;
-			// 		bottomFire.rotation = Math.PI * 0.5;
-			// 		stage.addChild(bottomFire);
-
-
-
-			// 		stage.removeChild(b.obj);
-			// 	}
-			// }
 
 			if(data.tile.length > 0 && !map){
 				for (var i = 0; i < data.tile.length; i++) {
@@ -534,9 +513,12 @@
 						p.obj.x = pack.x;
 					}
 					if(pack.y !== undefined)
-						p.obj.y = pack.y;
+						p.obj.y = pack.y;			
 					if(pack.hp !== undefined)
 						p.hp = pack.hp;
+						p.healthBar.width = p.hp * 3.5;
+						p.healthBar.x =pack.x + 8;
+						p.healthBar.y =pack.y - 5;		
 					if(pack.score !== undefined)
 						p.score = pack.score;
 
@@ -638,15 +620,15 @@
 				
 		}
 		document.onkeyup = function(event){
-			if(event.keyCode === 68)	//d
-				socket.emit('keyPress',{inputId:'right',state:false});
-			else if(event.keyCode === 83)	//s
-				socket.emit('keyPress',{inputId:'down',state:false});
-			else if(event.keyCode === 65) //a
-				socket.emit('keyPress',{inputId:'left',state:false});
-			else if(event.keyCode === 87) // w
-				socket.emit('keyPress',{inputId:'up',state:false});
-			else if(event.keyCode === 32) //space
+			// if(event.keyCode === 68)	//d
+			// 	socket.emit('keyPress',{inputId:'right',state:false});
+			// else if(event.keyCode === 83)	//s
+			// 	socket.emit('keyPress',{inputId:'down',state:false});
+			// else if(event.keyCode === 65) //a
+			// 	socket.emit('keyPress',{inputId:'left',state:false});
+			// else if(event.keyCode === 87) // w
+			// 	socket.emit('keyPress',{inputId:'up',state:false});
+			if(event.keyCode === 32) //space
 				socket.emit('keyPress',{inputId:'bomb',state:true});
 		}
 		

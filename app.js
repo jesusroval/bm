@@ -101,26 +101,7 @@ var Entity = function(param){
 
 		self.x += self.spdX;
 		self.y += self.spdY;
-//24*28
-		// if (isPositionWall(self.x,self.y)) {
-		// 	self.x = oldX;
-		// 	self.y = oldY;
-		// 	self.wall = true;
-		// } 
 
-		// else if(isPositionWall(self.x + 24*2, self.y)){
-		// 	self.x = oldX;
-		// 	self.y = oldY;
-		// 	self.wall = true;
-		// } else if(isPositionWall(self.x, self.y + 28*2)){
-		// 	self.x = oldX;
-		// 	self.y = oldY;
-		// 	self.wall = true;
-		// }else if(isPositionWall(self.x + 24*2, self.y + 28*2)){
-		// 	self.x = oldX;
-		// 	self.y = oldY;
-		// 	self.wall = true;
-		// }
 	}
 	self.getDistance = function(pt){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
@@ -142,6 +123,10 @@ var Player = function(param){
 	self.hp = 10;
 	self.hpMax = 10;
 	self.score = 0;
+	self.gridX = 1;
+	self.gridY = 1;
+	self.x = 70;
+	self.y = 70;
 	
 	var super_update = self.update;
 	self.update = function(){
@@ -174,25 +159,52 @@ var Player = function(param){
 	self.updateSpd = function(){
 
 
+		// var rightBumper = {x:self.x+45, y:self.y+28};
+		// var leftBumper = {x:self.x + 1, y:self.y+28};
+		// var topBumper = {x:self.x+24, y:self.y};
+		// var bottomBumper = {x:self.x+24, y:self.y +56};
+
 		var rightBumper = {x:self.x+45, y:self.y+28};
 		var leftBumper = {x:self.x + 1, y:self.y+28};
 		var topBumper = {x:self.x+24, y:self.y};
 		var bottomBumper = {x:self.x+24, y:self.y +56};
 
+		if(self.pressingRight && !isPositionWall({x:self.x + TILE_SIZE, y:self.y})){
+			self.x += TILE_SIZE;
 
-		if(self.pressingRight && !isPositionWall(rightBumper))
-			self.spdX = self.maxSpd;
-		else if(self.pressingLeft && !isPositionWall(leftBumper))
-			self.spdX = -self.maxSpd;
-		else
-			self.spdX = 0;
+		}
+		else if(self.pressingLeft && !isPositionWall({x:self.x - TILE_SIZE, y:self.y})){
+			self.x -= TILE_SIZE;
+
+		}
+
 		
-		if(self.pressingUp && !isPositionWall(topBumper))
-			self.spdY = -self.maxSpd;
-		else if(self.pressingDown && !isPositionWall(bottomBumper))
-			self.spdY = self.maxSpd;
-		else
-			self.spdY = 0;	
+		if(self.pressingUp && !isPositionWall({x:self.x, y:self.y - TILE_SIZE})){
+			self.y -= TILE_SIZE;
+
+		}
+		else if(self.pressingDown && !isPositionWall({x:self.x, y:self.y + TILE_SIZE})){
+			self.y += TILE_SIZE;
+
+		}
+			self.pressingLeft = false;
+			self.pressingRight = false;
+			self.pressingUp = false;
+			self.pressingDown = false;
+
+		// if(self.pressingRight && !isPositionWall(rightBumper))
+		// 	self.spdX = self.maxSpd;
+		// else if(self.pressingLeft && !isPositionWall(leftBumper))
+		// 	self.spdX = -self.maxSpd;
+		// else
+		// 	self.spdX = 0;
+		
+		// if(self.pressingUp && !isPositionWall(topBumper))
+		// 	self.spdY = -self.maxSpd;
+		// else if(self.pressingDown && !isPositionWall(bottomBumper))
+		// 	self.spdY = self.maxSpd;
+		// else
+		// 	self.spdY = 0;	
 	}
 	
 	self.getInitPack = function(){

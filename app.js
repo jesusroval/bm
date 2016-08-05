@@ -31,15 +31,15 @@ var explotionOffSetY = 28;
 // }
 
 	var array =[1,1,1,1,1,1,1,1,1,1,1,
-				1,0,0,0,2,0,0,0,2,3,1,
-				1,0,1,3,1,0,1,0,1,2,1,
+				1,0,0,0,2,0,0,0,2,10,1,
+				1,0,1,10,1,0,1,0,1,2,1,
 				1,0,0,2,0,0,2,0,2,0,1,
-				1,2,1,2,1,0,1,0,1,0,1,
+				1,11,1,2,1,0,1,0,1,0,1,
 				1,0,0,2,0,2,0,0,0,0,1,
 				1,2,1,0,1,2,1,2,1,0,1,
-				1,0,0,0,2,3,2,0,2,0,1,
+				1,0,0,0,2,10,2,0,2,0,1,
 				1,0,1,0,1,2,1,0,1,0,1,
-				1,3,0,0,0,2,2,0,0,3,1,				
+				1,11,0,0,0,2,2,0,0,10,1,				
 				1,1,1,1,1,1,1,1,1,1,1,
 				];
 
@@ -129,6 +129,8 @@ var Player = function(param){
 	self.y = 70;
 	self.killed = false;
 	self.explodeLength = 1;
+	self.bombs = [];
+	self.amountBombsAllowed = 1;
 	
 	var super_update = self.update;
 	self.update = function(){
@@ -140,14 +142,27 @@ var Player = function(param){
 			self.shootBullet(self.mouseAngle);
 		}
 
-		if(self.dropBomb){
-			Bomb(
-				{x:self.x,
-				y:self.y,
-				explodeLength:self.explodeLength});
+		if(self.dropBomb && self.amountBombsAllowed > self.bombs.length){
+			
+			var tempBomb = Bomb(
+					{x:self.x,
+					y:self.y,
+					explodeLength:self.explodeLength,
+					parent:self,
+					});
+
+			setTimeout(function(){
+				var tB = self.bombs.indexOf(tempBomb);
+				self.bombs.splice(tB, 1);
+				self.dropBomb = false;
+			}, tempBomb.fuse)
+
+			self.bombs.push(tempBomb);
+
 			self.dropBomb = false;
 		}
 
+		
 		// if(self.killed = false){
 		// 	console.log(self.killed);
 		// 	self.gridX = 1;
@@ -206,7 +221,13 @@ var Player = function(param){
 			var pU = PowerUp.list[i];
 			if(pU.gridX === self.gridX && pU.gridY === self.gridY){
 
-				self.explodeLength += 1;
+				if(pU.type === 'bombUp'){
+					self.explodeLength += 1;					
+				} else if(pU.type === 'amountUp'){
+					self.amountBombsAllowed += 1;					
+				}
+
+
 				console.log(array2D[pU.gridY][pU.gridX]);
 				delete PowerUp.list[i];
 				removePack.powerUp.push(pU.id);
@@ -302,15 +323,6 @@ Player.onConnect = function(socket){
 
 	});
 
-
-
-
-
-
-
-
-
-
 }
 Player.getAllInitPack = function(){
 	var players = [];
@@ -345,11 +357,16 @@ function checkImpact(data){
 			data.removeBlock = true;
 			data.hit = true;
 			changeMap(data);
-		} else if(mapGrid === 3){
+		} else if(mapGrid === 10){
 			data.powerUp = 'bombUp';
 			data.removeBlock = true;
 			data.hit = true;
 			changeMap(data);
+		} else if(mapGrid === 11){
+			data.powerUp = 'amountUp';
+			data.removeBlock = true;
+			data.hit = true;
+			changeMap(data);			
 		}
 
 		if(!data.hit){
@@ -503,6 +520,7 @@ var Explotion = function(param){
 		player.y = 1666;
 		player.hp = player.hpMax;
 		player.explodeLength = 1;
+		player.amountBombsAllowed = 1;
 
 		setTimeout(function() {
 			player.gridX = 1;
@@ -558,12 +576,14 @@ var Bomb = function(param){
 	var self = Entity(param);
 	self.id = Math.random();
 	self.toRemove;
-	self.fuse = 1000;
+	self.fuse = 2000;
 	self.explode = false;
 	self.explodeLength = param.explodeLength;
+	self.parent = param.parent;
 
 	self.explodeFunc = setTimeout(function() { 
 		self.toRemove = true;
+		delete self.parent.bombs[self];
 		destroy(
 					self.x,
 					self.y,
@@ -814,8 +834,10 @@ function initMap() {
 				Tile({gridX:j, gridY:i, type:1,});
 			} else if(array2D[i][j] === 2){
 				Tile({gridX:j, gridY:i, type:2,});
-			} else if(array2D[i][j] === 3){
-				Tile({gridX:j, gridY:i, type:3,});
+			} else if(array2D[i][j] === 10){
+				Tile({gridX:j, gridY:i, type:10,});
+			} else if(array2D[i][j] === 11) {
+				Tile({gridX:j, gridY:i, type:10,});				
 			}
 		}
 	}

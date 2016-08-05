@@ -304,6 +304,11 @@
 				self.obj.position.x = (initPack.gridX * TILE_SIZE) + 16;
 				self.obj.position.y = (initPack.gridY * TILE_SIZE) + 16;
 				stage.addChild(self.obj);				
+			} else if(self.type === 'amountUp'){
+				self.obj = new PIXI.Sprite.fromImage('/client/img/Bombupsprite.png');
+				self.obj.position.x = (initPack.gridX * TILE_SIZE) + 16;
+				self.obj.position.y = (initPack.gridY * TILE_SIZE) + 16;
+				stage.addChild(self.obj);					
 			}
 
 

@@ -361,9 +361,7 @@
 				for(var i = 0 ; i < data.player.length; i++){
 					charArray.push(new Player(data.player[i]));
 				}
-				for(var i = 0 ; i < data.bullet.length; i++){
-					new Bullet(data.bullet[i]);
-				}
+
 			}
 
 		});

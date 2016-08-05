@@ -115,7 +115,7 @@
 		var assetsToLoader = ["/client/img/animals.json"];
 
 
-		var loader = new PIXI.loaders.Loader('/client/img', 5);
+		var loader = new PIXI.loaders.Loader('/client/img', 7);
 
 
 
@@ -618,9 +618,10 @@
 
 			for (var i = 0; i < data.powerUp.length; i++) {
 				var pU = PowerUp.list[data.powerUp[i]];
-
-				stage.removeChild(pU.obj);
-				delete PowerUp.list[powerUp.bomb[i]];
+				if(pU){
+					stage.removeChild(pU.obj);
+					delete PowerUp.list[data.powerUp[i]];
+				}
 
 			}			
 			// for(var i = 0 ; i < data.bullet.length; i++){

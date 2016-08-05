@@ -20,15 +20,7 @@ var charArray = [];
 var TILE_SIZE = 64;	
 var explotionOffSetX = 24; 
 var explotionOffSetY = 28;
-// var array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
- 
-// var array2D = [];
-// for(var i = 0 ; i < 40; i++){
-// 	arary2D[i] = [];
-// 	for(var j = 0 ; j < 40; j++){
-// 		array2D[i][j] = array[i * 40 + j];
-// 	}
-// }
+
 
 	var array =[1,1,1,1,1,1,1,1,1,1,1,
 				1,0,0,0,2,0,0,0,2,10,1,
@@ -131,7 +123,8 @@ var Player = function(param){
 	self.explodeLength = 1;
 	self.bombs = [];
 	self.amountBombsAllowed = 1;
-	
+	self.died = false;
+
 	var super_update = self.update;
 	self.update = function(){
 		self.updateSpd();
@@ -161,17 +154,6 @@ var Player = function(param){
 
 			self.dropBomb = false;
 		}
-
-		
-		// if(self.killed = false){
-		// 	console.log(self.killed);
-		// 	self.gridX = 1;
-		// 	self.gridY = 1;
-		// 	self.x = 70;
-		// 	self.y = 70;
-		// 	self.hp = self.hpMax;
-		// 	self.killed = true;		
-		// }
 	}
 
 	self.shootBullet = function(angle){
@@ -238,20 +220,6 @@ var Player = function(param){
 			self.pressingRight = false;
 			self.pressingUp = false;
 			self.pressingDown = false;
-
-		// if(self.pressingRight && !isPositionWall(rightBumper))
-		// 	self.spdX = self.maxSpd;
-		// else if(self.pressingLeft && !isPositionWall(leftBumper))
-		// 	self.spdX = -self.maxSpd;
-		// else
-		// 	self.spdX = 0;
-		
-		// if(self.pressingUp && !isPositionWall(topBumper))
-		// 	self.spdY = -self.maxSpd;
-		// else if(self.pressingDown && !isPositionWall(bottomBumper))
-		// 	self.spdY = self.maxSpd;
-		// else
-		// 	self.spdY = 0;	
 	}
 	
 	self.getInitPack = function(){
@@ -274,7 +242,8 @@ var Player = function(param){
 			y:self.y,
 			hp:self.hp,
 			score:self.score,
-			dropBomb:self.dropBomb
+			dropBomb:self.dropBomb,
+			died:self.died,
 		}	
 	}
 	
@@ -441,11 +410,6 @@ function changeMap(data){
 
 }
 
-		// if(Tile.List[i].gridX === data.x && Tile.List[i].gridY === data.y){
-		// 	var tile = Tile.list[i];
-		// 	removePack.tile.push(tile.id);
-		// 	delete Tile.list[i];
-		// }
 function timedExplotion(data){
 	setTimeout(function(){
 		Explotion(data);
@@ -462,7 +426,7 @@ var PowerUp = function(param){
 	self.toRemove = false;
 
 	setTimeout(function() {
-		delete Bullet.list[self];
+		delete PowerUp.list[self];
 		removePack.powerUp.push(self.id);
 	}, self.burnTime);
 
@@ -514,13 +478,14 @@ var Explotion = function(param){
 		}
 
 	function died(player){
-		player.gridX = 66;
-		player.gridY = 66;
-		player.x = 1666;
-		player.y = 1666;
+		player.gridX = -6;
+		player.gridY = -6;
+		player.x = -666;
+		player.y = -666;
 		player.hp = player.hpMax;
 		player.explodeLength = 1;
 		player.amountBombsAllowed = 1;
+		player.died = true;
 
 		setTimeout(function() {
 			player.gridX = 1;
@@ -528,6 +493,7 @@ var Explotion = function(param){
 			player.x = 70;
 			player.y = 70;
 			player.hp = player.hpMax;
+			player.died = false;
 		}, 2000);
 	}
 
@@ -624,11 +590,6 @@ Bomb.update = function(){
 			delete Bomb.list[i];
 			removePack.bomb.push(bomb.id);
 		}
-
-		// if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
-		// 	delete Bullet.list[i];
-		// 	removePack.bullet.push(bullet.id);
-		// } else
 		pack.push(bomb.getUpdatePack());		
 	}
 	return pack;
@@ -665,85 +626,6 @@ Tile.getAllInitPack = function(){
 		tiles.push(Tile.list[i].getInitPack());
 	}
 	return tiles;
-}
-
-
-var Bullet = function(param){
-	var self = Entity(param);
-	self.id = Math.random();
-	self.angle = param.angle;
-	self.spdX = Math.cos(param.angle/180*Math.PI) * 10;
-	self.spdY = Math.sin(param.angle/180*Math.PI) * 10;
-	self.parent = param.parent;
-	
-	self.timer = 0;
-	self.toRemove = false;
-	var super_update = self.update;
-	self.update = function(){
-		if(self.timer++ > 100)
-			self.toRemove = true;
-		super_update();
-		
-		for(var i in Player.list){
-			var p = Player.list[i];
-			if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id){
-				p.hp -= 1;
-								
-				if(p.hp <= 0){
-					var shooter = Player.list[self.parent];
-					if(shooter)
-						shooter.score += 1;
-					p.hp = p.hpMax;
-					p.x = Math.random() * 680;
-					p.y = Math.random() * 400;					
-				}
-				self.toRemove = true;
-			}
-		}
-	}
-	self.getInitPack = function(){
-		return {
-			id:self.id,
-			x:self.x,
-			y:self.y,
-			map:self.map,
-		};
-	}
-	self.getUpdatePack = function(){
-		return {
-			id:self.id,
-			x:self.x,
-			y:self.y,		
-		};
-	}
-	
-	Bullet.list[self.id] = self;
-	initPack.bullet.push(self.getInitPack());
-	return self;
-}
-Bullet.list = {};
-
-Bullet.update = function(){
-	var pack = [];
-	for(var i in Bullet.list){
-		var bullet = Bullet.list[i];
-		bullet.update();
-
-
-		if(bullet.toRemove || isPositionWall(bullet.x, bullet.y)){
-			delete Bullet.list[i];
-			removePack.bullet.push(bullet.id);
-		} else
-			pack.push(bullet.getUpdatePack());		
-	}
-	return pack;
-}
-
-Bullet.getAllInitPack = function(){
-	var bullets = [];
-	for(var i in Bullet.list)
-		bullets.push(Bullet.list[i].getInitPack());
-	return bullets;
 }
 
 var DEBUG = true;
@@ -824,8 +706,8 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[]};
-var removePack = {player:[],bullet:[], bomb:[], explotion:[], tile:[], powerUp:[]};
+var initPack = {player:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[]};
+var removePack = {player:[], bomb:[], explotion:[], tile:[], powerUp:[]};
 
 function initMap() {
 	for (var i = 0; i < array2D[0].length; i++) {
@@ -851,7 +733,6 @@ initMap();
 setInterval(function(){
 	var pack = {
 		player:Player.update(),
-		bullet:Bullet.update(),
 		bomb:Bomb.update(),
 		explotion:Explotion.update(),
 		tile:Tile.getAllInitPack(),
@@ -864,14 +745,12 @@ setInterval(function(){
 		socket.emit('remove',removePack);
 	}
 	initPack.player = [];
-	initPack.bullet = [];
 	initPack.bomb = [];
 	initPack.explotion = [];
 	initPack.tile = [];
 	initPack.powerUp = [];
 
 	removePack.player = [];
-	removePack.bullet = [];
 	removePack.bomb = [];
 	removePack.explotion = [];
 	removePack.tile = [];

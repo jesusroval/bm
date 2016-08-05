@@ -18,6 +18,7 @@
 	var bombArray = [];
 	var oldX;
 	var oldY;
+	var aPlayer = false;
 
 	var explotionOffSetX = 24; 
 	var explotionOffSetY = 28;
@@ -93,17 +94,6 @@
 	// }
 	
 	function game(){
-		// var Img = {};
-		// Img.player = new Image();
-		// Img.player.src = '/client/img/player.png';
-		// Img.bullet = new Image();
-		// Img.bullet.src = '/client/img/bullet.png';
-		
-		// Img.map = {};
-		// Img.map['field'] = new Image();
-		// Img.map['field'].src = '/client/img/map.png';
-		// Img.map['forest'] = new Image();
-		// Img.map['forest'].src = '/client/img/map2.png';
 
 		var renderer = new PIXI.WebGLRenderer(704, 704);
 		
@@ -111,45 +101,38 @@
 		
 		stage = new PIXI.Container();
 
-
 		var assetsToLoader = ["/client/img/animals.json"];
 
-
 		var loader = new PIXI.loaders.Loader('/client/img', 7);
-
-
-
 
 		loader.load();
 
 		animate();
 // -
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
 		// var ctx = document.getElementById("ctx").getContext("2d");
 		// ctx.font = '30px Arial';
-			function animate() {
-				requestAnimationFrame(animate);
-				if(testID){
-					p = Player.list[testID];
+	function animate() {
+		requestAnimationFrame(animate);
+			if(aPlayer){
+				for(var i in Player.list){
+					tempPlayer = Player.list[i];
+					if(tempPlayer.died === false){
+						if(tempPlayer.serverX !== tempPlayer.obj.x){
+							var diff = tempPlayer.serverX - tempPlayer.obj.x;
+							tempPlayer.obj.x += diff/5;
+						}
+						if(tempPlayer.serverY !== tempPlayer.obj.y){
+							var diff = tempPlayer.serverY - tempPlayer.obj.y;
+							tempPlayer.obj.y += diff/5;
+						}
+					} else{
+						tempPlayer.obj.x = tempPlayer.serverX;
+						tempPlayer.obj.y = tempPlayer.serverY;
+					}							
 				}
-				// test.rotation += 0.01;
+			}	
 
-				renderer.render(stage);
+		renderer.render(stage);
 		}
 		
 		var Player = function(initPack){
@@ -162,6 +145,13 @@
 			self.hpMax = initPack.hpMax;
 			self.score = initPack.score;
 			self.map = initPack.map;
+			self.died;
+
+			self.serverX = initPack.x;
+			self.serverY = initPack.y;
+			// self.nowX;
+			// self.nowY;
+
 
 			if(selfId === null){selfId = self.id};
 
@@ -169,8 +159,8 @@
 			self.obj = new PIXI.Sprite.fromImage('/client/img/player.png');
 			self.obj.scale.x = 2;
 			self.obj.scale.y = 2;
-			self.obj.x = 100;
-			self.obj.y = 100;
+			self.obj.x = initPack.x;
+			self.obj.y = initPack.y;
 			stage.addChild(self.obj);
 
 			// working but have instant death
@@ -196,40 +186,6 @@
 
 			// self.healthBar.outer = outerBar;
 
-
-
-
-
-			// var testArray = [];
-			// for (var i = 0; i < 4; i++) {
-			// 	var test = new PIXI.Sprite.fromImage('/client/img/Untitled.png');
-			// 	testArray.push(test);
-			// }
-
-			// //left
-			// testArray[0].x = self.obj.x;
-			// testArray[0].y = self.obj.y;
-			// //right
-			// testArray[1].x = self.obj.x + 45;
-			// testArray[1].y = self.obj.y;
-
-			// //bottom left
-			// testArray[2].x = self.obj.x;
-			// testArray[2].y = self.obj.y + 45;
-
-			// //bottom (top)right
-			// testArray[3].x = self.obj.x + 45;
-			// testArray[3].y = self.obj.y + 45;
-
-
-
-
-			// for (var i = 0; i < testArray.length; i++) {
-			// 	stage.addChild(testArray[i]);
-			// }
-
-
-
 			self.draw = function(){	
 
 				// var x = self.x - Player.list[selfId].x + WIDTH/2;
@@ -252,45 +208,12 @@
 			
 			Player.list[self.id] = self;
 			
+			aPlayer = true;
 			
 			return self;
 		}
 		Player.list = {};
-		// var explode = function(self){
-		// 	var gridX = Math.floor((self.x + explotionOffSetX) / TILE_SIZE);
-		// 	var gridY = Math.floor((self.y + explotionOffSetY) / TILE_SIZE);
-
-		// 	var objects = [];
-
-		// 	var rightFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-		// 	rightFire.position.x = (gridX + 1) * TILE_SIZE;
-		// 	rightFire.position.y = gridY * TILE_SIZE;
-		// 	stage.addChild(rightFire);
-		// 	objects.push(rightFire);
-
-		// 	var leftFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-		// 	leftFire.position.x = gridX * TILE_SIZE;
-		// 	leftFire.position.y = (gridY +1) * TILE_SIZE;
-		// 	leftFire.rotation = Math.PI;
-		// 	stage.addChild(leftFire);
-		// 	objects.push(leftFire);
-
-		// 	var topFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-		// 	topFire.position.x = gridX * TILE_SIZE;
-		// 	topFire.position.y = gridY * TILE_SIZE;
-		// 	topFire.rotation = Math.PI * 1.5;
-		// 	stage.addChild(topFire);
-		// 	objects.push(topFire);
-
-		// 	var bottomFire = new PIXI.Sprite.fromImage('/client/img/arrow.png');
-		// 	bottomFire.position.x = (gridX + 1) * TILE_SIZE;
-		// 	bottomFire.position.y = (gridY + 1) * TILE_SIZE;
-		// 	bottomFire.rotation = Math.PI * 0.5;
-		// 	stage.addChild(bottomFire);
-		// 	objects.push(bottomFire);
-
-		// 	return objects;
-		// }
+		
 		var PowerUp = function(initPack){
 			var self = {};
 
@@ -323,8 +246,6 @@
 			self.x = initPack.x;
 			self.y = initPack.y;
 
-
-			// var draw = setTimeout(function(){
 				if(initPack.removeBlock){
 					array2D[data.y][data.x] = 0;
 
@@ -334,59 +255,12 @@
 				self.obj.position.y = initPack.gridY * TILE_SIZE;
 				stage.addChild(self.obj);
 
-			// }, initPack.timer);
-
-
-
-			// var i = 0;
-
-			// var first = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-
-			// first.position.x = initPack.explosionCords[0].x * TILE_SIZE;
-			// first.position.y = initPack.explosionCords[0].y * TILE_SIZE;
-			// stage.addChild(first);
-
-			// i+=1;
-
-			// var myVar = setInterval( function(){
-			// 	explode(initPack,i);
-			// 	i +=4;
-			// 	if(i >= initPack.explosionCords.length){
-			// 		clearInterval(myVar);
-			// 	}
-			// }, initPack.burnTime);
-			
-
 
 
 			Explotion.list[self.id] = self;		
 			return self;
 		}
 		Explotion.list = {};	
-
-		var explode = function(initPack, i) {
-
-
-				var temp = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-				temp.position.x = initPack.explosionCords[i].x * TILE_SIZE;
-				temp.position.y = initPack.explosionCords[i].y * TILE_SIZE;
-				stage.addChild(temp);
-
-				var temp2 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-				temp2.position.x = initPack.explosionCords[i+1].x * TILE_SIZE;
-				temp2.position.y = initPack.explosionCords[i+1].y * TILE_SIZE;
-				stage.addChild(temp2);
-
-				var temp3 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-				temp3.position.x = initPack.explosionCords[i+2].x * TILE_SIZE;
-				temp3.position.y = initPack.explosionCords[i+2].y * TILE_SIZE;
-				stage.addChild(temp3);
-
-				var temp4 = new PIXI.Sprite.fromImage('/client/img/explosion.png');
-				temp4.position.x = initPack.explosionCords[i+3].x * TILE_SIZE;
-				temp4.position.y = initPack.explosionCords[i+3].y * TILE_SIZE;
-				stage.addChild(temp4);		
-		}
 
 		var Tile = function(initPack){
 			var self = {};
@@ -480,36 +354,9 @@
 					new Bomb(data.bomb[i]);
 				}				
 			}
-			// if(data.serverArray && !map){				
-			// 	array2D = data.serverArray;
-
-			// 	for (var i = 0; i < array2D[0].length; i++) {
-			// 		for (var j = 0; j < array2D.length; j++) {
-			// 			if (array2D[i][j] === 1) {
-			// 				var box = new PIXI.Sprite.fromImage('/client/img/grid.png');
-			// 				box.position.x = j*TILE_SIZE;
-			// 				box.position.y = i*TILE_SIZE;
-			// 				// box.scale.x=2;
-			// 				// box.scale.y=2;
-			// 				stage.addChild(box);
-			// 			} else if(array2D[i][j] === 2){
-			// 				var box = new PIXI.Sprite.fromImage('/client/img/stone.png');
-			// 				box.position.x = j*TILE_SIZE;
-			// 				box.position.y = i*TILE_SIZE;
-			// 				// box.scale.x=2;
-			// 				// box.scale.y=2;
-			// 				stage.addChild(box);
-			// 			}
-			// 		}
-			// 	}
-
-			// 	map = array2D;
-			// }
-
 
 			if(data.selfId)
 				selfId = data.selfId;
-			//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
 			if(data.player){
 				for(var i = 0 ; i < data.player.length; i++){
 					charArray.push(new Player(data.player[i]));
@@ -525,7 +372,7 @@
 		});
 
 		socket.on('update',function(data){
-
+			console.log('server update');
 			if(data.tile.length > 0 && !map){
 				for (var i = 0; i < data.tile.length; i++) {
 					new Tile(data.tile[i]);
@@ -548,10 +395,12 @@
 					oldY = p.obj.y;
 
 					if(pack.x !== undefined){
-						p.obj.x = pack.x;
+						// p.obj.x = pack.x;
+						p.serverX = pack.x;
 					}
 					if(pack.y !== undefined)
-						p.obj.y = pack.y;			
+						// p.obj.y = pack.y;
+						p.serverY = pack.y;			
 					if(pack.hp !== undefined)
 						p.hp = pack.hp;
 					// working but have instant death
@@ -561,32 +410,14 @@
 					if(pack.score !== undefined)
 						p.score = pack.score;
 
-					// if(pack.dropBomb === true){
-					// 	var bomb = new PIXI.Sprite.fromImage('/client/img/bomb.png');
-					// 	bomb.x = p.obj.x + 10;
-					// 	bomb.y = p.obj.y + 20;
-					// 	stage.addChild(bomb);
-					// 	socket.emit('keyPress',{inputId:'bomb',state:false});
-					// }
-
-
-				
+					if(pack.died !== undefined){
+						p.died = pack.died;
+					}	
 
 			}
-			// for(var i = 0 ; i < data.bullet.length; i++){
-			// 	var pack = data.bullet[i];
-			// 	var b = Bullet.list[data.bullet[i].id];
-			// 	if(b){
-			// 		if(pack.x !== undefined)
-			// 			b.obj.x = pack.x + 8;
-			// 		if(pack.y !== undefined)
-			// 			b.obj.y = pack.y + 16;
-			// 	}
-			// }
 		});
 		
 		socket.on('remove',function(data){
-			//{player:[12323],bullet:[12323,123123]}
 			for(var i = 0 ; i < data.player.length; i++){
 				var p = Player.list[data.player[i]];
 				stage.removeChild(p.obj);
@@ -602,9 +433,7 @@
 			}
 			for (var i = 0; i < data.explotion.length; i++) {
 				var e = Explotion.list[data.explotion[i]];
-				// for (var i = 0; i < e.objects.length; i++) {
-				// 	stage.removeChild(e.objects[i]);
-				// }
+
 				stage.removeChild(e.obj);
 				delete Explotion.list[data.explotion[i]];
 			}
@@ -613,7 +442,6 @@
 				var t = Tile.list[data.tile[i]];
 				stage.removeChild(t.obj);
 				delete Tile.list[data.tile[i]];
-				// array2D[data.tile.gridY][data.tile.gridX] = 0;
 			}
 
 			for (var i = 0; i < data.powerUp.length; i++) {
@@ -624,23 +452,7 @@
 				}
 
 			}			
-			// for(var i = 0 ; i < data.bullet.length; i++){
-			// 	var b = Bullet.list[data.bullet[i]];
-			// 	stage.removeChild(b.obj);
-			// }
 		});
-		
-		// setInterval(function(){
-		// 	if(!selfId)
-		// 		return;
-		// 	ctx.clearRect(0,0,680,400);
-		// 	drawMap();
-		// 	drawScore();
-		// 	for(var i in Player.list)
-		// 		Player.list[i].draw();
-		// 	for(var i in Bullet.list)
-		// 		Bullet.list[i].draw();
-		// },40);
 		
 		var drawMap = function(){
 			// var player = Player.list[selfId];
@@ -688,14 +500,10 @@
 		// }
 		document.onmousemove = function(event){
 
-			mX = renderer.plugins.interaction.mouse.global.x;
-			mY = renderer.plugins.interaction.mouse.global.y;
-			mousePos(mX, mY); 
+			// mX = renderer.plugins.interaction.mouse.global.x;
+			// mY = renderer.plugins.interaction.mouse.global.y;
+			// mousePos(mX, mY); 
 
-			// var x = -Player.list[selfId].x + event.clientX - 8;
-			// var y = -Player.list[selfId].y + event.clientY - 8;
-			// var angle = Math.atan2(y,x) / Math.PI * 180;
-			// socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
 		}
 		
 		mousePos = function(eX, eY){

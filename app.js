@@ -108,10 +108,10 @@ var Enemy = function(param){
 	self.y = (param.gridY * TILE_SIZE) + 30;
 
 
-	self.maxSpd = 6;
+	self.maxSpd = 4;
 	//left, up, right, down
 	self.direction = [true, false, false, false];
-
+	self.isWall = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd*8,0],[0,self.maxSpd*8]];
 	self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
 	
 
@@ -131,7 +131,7 @@ var Enemy = function(param){
 
 
 
-				if(!isPositionWall({x:self.x + self.movmentSpeed[i][0], y:self.y + self.movmentSpeed[i][1]})){
+				if(!isPositionWall({x:self.x + self.isWall[i][0], y:self.y + self.isWall[i][1]})){
 					self.x += self.movmentSpeed[i][0];
 					self.y += self.movmentSpeed[i][1];
 					break; 
@@ -140,7 +140,7 @@ var Enemy = function(param){
 					self.direction[i] = false;
 
 					for (var j = 0; j < self.movmentSpeed.length; j++) {
-						if(!isPositionWall({x:self.x + self.movmentSpeed[j][0], y:self.y + self.movmentSpeed[j][1]})){
+						if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){
 							
 							possibleDirection.push(j);
 							// self.direction[j] = true;
@@ -381,7 +381,7 @@ var Player = function(param){
 	
 	Player.list[self.id] = self;
 
-	Enemy.getAllInitPack();
+	// Enemy.getAllInitPack();
 	initPack.player.push(self.getInitPack());
 	return self;
 }

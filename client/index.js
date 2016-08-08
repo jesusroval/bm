@@ -13,6 +13,7 @@ var playChar;
 var cats = ['cat.png' ,'hedgehog.png', 'tiger.png', 'bomb.png', 'tile.png'];
 var charArray = [];
 var map;
+var enemy = false;
 var array2D = [];
 var testID;
 var bombArray = [];
@@ -373,13 +374,13 @@ socket.on('init',function(data){
 	// 	map = true;
 	// 	console.log(data.tile.length +  ' tile init');		
 	// }
-	if(data.enemy){
-		for (var i = 0; i < data.enemy.length; i++) {
-			var tempEnemy = data.enemy[i];
-			new Enemy(tempEnemy);
+	// if(data.enemy){
+	// 	for (var i = 0; i < data.enemy.length; i++) {
+	// 		var tempEnemy = data.enemy[i];
+	// 		new Enemy(tempEnemy);
 
-		}				
-	}
+	// 	}				
+	// }
 	if (data.powerUp) {
 		for (var i = 0; i < data.powerUp.length; i++) {
 			new PowerUp(data.powerUp[i]);
@@ -414,12 +415,21 @@ socket.on('bombTest', function(data){
 
 socket.on('update',function(data){
 
-	for (var i = 0; i < data.enemy.length; i++) {
-		var pack = data.enemy[i];
-		var e = Enemy.list[pack.id];
+	if(enemy === true){
+		for (var i = 0; i < data.enemy.length; i++) {
+			var pack = data.enemy[i];
+			var e = Enemy.list[pack.id];
 
-		e.obj.x = pack.x;
-		e.obj.y = pack.y;
+			e.obj.x = pack.x;
+			e.obj.y = pack.y;
+
+		}
+	} else{
+			for (var i = 0; i < data.enemy.length; i++) {
+				var tempEnemy = data.enemy[i];
+				new Enemy(tempEnemy);
+			}
+			enemy = true;			
 	}
 
 	if(data.tile.length > 0 && !map){

@@ -21,15 +21,16 @@ var TILE_SIZE = 64;
 var explotionOffSetX = 24; 
 var explotionOffSetY = 28;
 
+var asp = [];
 
 	var array =[1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
 				1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,10,1,
-				1 ,0 ,1 ,10,1 ,0 ,1 ,1,01 ,2 ,1,
+				1 ,0 ,1 ,10,1 ,0 ,1 ,10 ,1 ,2 ,1,
 				1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,2 ,0 ,1,
-				1 ,11,1 ,2 ,1 ,0 ,1 ,0 ,1 ,0 ,1,
-				1 ,0 ,0 ,2 ,0 ,2 ,0 ,0 ,0 ,0 ,1,
+				1 ,11,1 ,2 ,1 ,0 ,1 ,2 ,1 ,0 ,1,
+				1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,2 ,0 ,1,
 				1 ,2 ,1 ,0 ,1 ,2 ,1 ,2 ,1 ,0 ,1,
-				1 ,0 ,0 ,0 ,2 ,10,2 ,0 ,2 ,0 ,1,
+				1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,0 ,1,
 				1 ,0 ,1 ,0 ,1 ,2 ,1 ,0 ,1 ,0 ,1,
 				1 ,11,0 ,0 ,0 ,2 ,2 ,0 ,0 ,10,1,				
 				1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
@@ -99,6 +100,137 @@ var Entity = function(param){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
 	}
 	return self;
+}
+var Enemy = function(param){
+	var self = {};
+	self.id = Math.random();
+	self.x = (param.gridX * TILE_SIZE) + 30;
+	self.y = (param.gridY * TILE_SIZE) + 30;
+
+
+	self.maxSpd = 6;
+	//left, up, right, down
+	self.direction = [true, false, false, false];
+
+	self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
+	
+
+
+	self.move = function(){
+
+	var possibleDirection = [];
+
+		for (var i = 0; i < 4; i++) {
+
+
+			if(self.direction[i]){
+
+				var oldX = self.x;
+				var oldY = self.y;
+
+
+
+
+				if(!isPositionWall({x:self.x + self.movmentSpeed[i][0], y:self.y + self.movmentSpeed[i][1]})){
+					self.x += self.movmentSpeed[i][0];
+					self.y += self.movmentSpeed[i][1];
+					break; 
+
+				} else{
+					self.direction[i] = false;
+
+					for (var j = 0; j < self.movmentSpeed.length; j++) {
+						if(!isPositionWall({x:self.x + self.movmentSpeed[j][0], y:self.y + self.movmentSpeed[j][1]})){
+							
+							possibleDirection.push(j);
+							// self.direction[j] = true;
+
+							// self.x += self.movmentSpeed[j][0];
+							// self.y += self.movmentSpeed[j][1];
+							// break; 
+
+						}
+					}
+				}
+			}
+		}
+
+
+		if (possibleDirection.length > 0) {
+
+			var found = false;
+
+
+			for (var i = 0; i < possibleDirection.length; i++) {
+				var random = Math.random();			
+				if(random < 0.5){
+
+					self.direction[possibleDirection[i]] = true;
+
+					self.x += self.movmentSpeed[possibleDirection[i]][0];
+					self.y += self.movmentSpeed[possibleDirection[i]][1];
+
+					found = true;
+					break; 
+				}
+			}
+
+			if(found === false){
+					self.direction[possibleDirection[0]] = true;
+
+					self.x += self.movmentSpeed[possibleDirection[0]][0];
+					self.y += self.movmentSpeed[possibleDirection[0]][1];
+			}
+		}
+	}
+
+	// self.move();
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,	
+
+		};		
+	}
+
+	self.getUpdatePack = function(){
+
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		}	
+	}	
+
+	Enemy.list[self.id] = self;
+	initPack.enemy.push(self.getInitPack());
+	return self;
+}
+Enemy.list = {};
+
+Enemy.getAllInitPack = function(){
+	var enemies = [];
+	for(var i in Enemy.list)
+		initPack.enemy.push(Enemy.list[i].getInitPack());
+
+}
+
+Enemy.update = function(){
+	var pack = [];
+	for(var i in Enemy.list){
+		var enemy = Enemy.list[i];
+
+		enemy.move();
+		// bomb.update();
+		// if(explotion.toRemove){
+		// 	delete Enemy.list[i];
+		// 	removePack.enemy.push(enemy.id);
+		// }
+		pack.push(enemy.getUpdatePack());		
+	}
+	return pack;
 }
 
 var Player = function(param){
@@ -248,7 +380,8 @@ var Player = function(param){
 	}
 	
 	Player.list[self.id] = self;
-	
+
+	Enemy.getAllInitPack();
 	initPack.player.push(self.getInitPack());
 	return self;
 }
@@ -706,7 +839,7 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[]};
+var initPack = {player:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[], enemy:[]};
 var removePack = {player:[], bomb:[], explotion:[], tile:[], powerUp:[]};
 
 function initMap() {
@@ -720,14 +853,19 @@ function initMap() {
 				Tile({gridX:j, gridY:i, type:10,});
 			} else if(array2D[i][j] === 11) {
 				Tile({gridX:j, gridY:i, type:10,});				
-			}
+			} 
+
+			
 		}
 	}
 }
 
 initMap();
 
-
+				Enemy({gridX:5, gridY:5});
+				Enemy({gridX:7, gridY:7});
+				Enemy({gridX:5, gridY:5});
+				Enemy({gridX:7, gridY:7});
 
 
 setInterval(function(){
@@ -736,7 +874,10 @@ setInterval(function(){
 		bomb:Bomb.update(),
 		explotion:Explotion.update(),
 		tile:Tile.getAllInitPack(),
+		enemy:Enemy.update(),
 	}
+
+
 	
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
@@ -749,6 +890,7 @@ setInterval(function(){
 	initPack.explotion = [];
 	initPack.tile = [];
 	initPack.powerUp = [];
+	initPack.enemy = [];
 
 	removePack.player = [];
 	removePack.bomb = [];

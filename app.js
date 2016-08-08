@@ -28,9 +28,9 @@ var asp = [];
 				1 ,0 ,1 ,10,1 ,0 ,1 ,10 ,1 ,2 ,1,
 				1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,2 ,0 ,1,
 				1 ,11,1 ,2 ,1 ,0 ,1 ,2 ,1 ,0 ,1,
-				1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,2 ,0 ,1,
-				1 ,2 ,1 ,0 ,1 ,2 ,1 ,2 ,1 ,0 ,1,
-				1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,0 ,1,
+				1 ,0 ,0 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,1,
+				1 ,2 ,1 ,10,1 ,2 ,1 ,2 ,1 ,0 ,1,
+				1 ,0 ,0 ,2 ,2 ,0 ,0 ,0 ,2 ,0 ,1,
 				1 ,0 ,1 ,0 ,1 ,2 ,1 ,0 ,1 ,0 ,1,
 				1 ,11,0 ,0 ,0 ,2 ,2 ,0 ,0 ,10,1,				
 				1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
@@ -48,7 +48,56 @@ for(var i = 0 ; i < 11; i++){
 
 
 
+function hitTestRectangle(r1, r2) {
 
+  //Define the variables we'll need to calculate
+  var hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+  //hit will determine whether there's a collision
+  hit = false;
+
+  //Find the center points of each sprite
+  r1.centerX = r1.x + r1.width / 2;
+  r1.centerY = r1.y + r1.height / 2;
+  r2.centerX = r2.x + r2.width / 2;
+  r2.centerY = r2.y + r2.height / 2;
+
+  //Find the half-widths and half-heights of each sprite
+  r1.halfWidth = r1.width / 2;
+  r1.halfHeight = r1.height / 2;
+  r2.halfWidth = r2.width / 2;
+  r2.halfHeight = r2.height / 2;
+
+  //Calculate the distance vector between the sprites
+  vx = r1.centerX - r2.centerX;
+  vy = r1.centerY - r2.centerY;
+
+  //Figure out the combined half-widths and half-heights
+  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+  //Check for a collision on the x axis
+  if (Math.abs(vx) < combinedHalfWidths) {
+
+    //A collision might be occuring. Check for a collision on the y axis
+    if (Math.abs(vy) < combinedHalfHeights) {
+
+      //There's definitely a collision happening
+      hit = true;
+    } else {
+
+      //There's no collision on the y axis
+      hit = false;
+    }
+  } else {
+
+    //There's no collision on the x axis
+    hit = false;
+  }
+
+  //`hit` will be either `true` or `false`
+  return hit;
+};
 
 isPositionWall = function(bumper){
 
@@ -106,7 +155,10 @@ var Enemy = function(param){
 	self.id = Math.random();
 	self.x = (param.gridX * TILE_SIZE) + 30;
 	self.y = (param.gridY * TILE_SIZE) + 30;
-
+	self.width = 32;
+	self.height = 32;
+	self.gridX = 1;
+	self.gridY = 1;
 
 	self.maxSpd = 4;
 	//left, up, right, down
@@ -117,8 +169,12 @@ var Enemy = function(param){
 
 
 	self.move = function(){
-
+	
 	var possibleDirection = [];
+
+	// if(Math.random() < 0.98){
+
+
 
 		for (var i = 0; i < 4; i++) {
 
@@ -132,9 +188,46 @@ var Enemy = function(param){
 
 
 				if(!isPositionWall({x:self.x + self.isWall[i][0], y:self.y + self.isWall[i][1]})){
+					var change = Math.random();
+					var changeInt = 1;
+
+					if(change > 0.01){
 					self.x += self.movmentSpeed[i][0];
 					self.y += self.movmentSpeed[i][1];
-					break; 
+					break;
+					} else{
+
+						self.direction[i] = false;
+
+					for (var j = 0; j < self.movmentSpeed.length; j++) {
+
+						if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){
+							
+							possibleDirection.push(j);
+							// self.direction[j] = true;
+
+							// self.x += self.movmentSpeed[j][0];
+							// self.y += self.movmentSpeed[j][1];
+							// break; 
+
+						}
+					}
+
+
+						// var newIndex = 0;
+
+						// if(i === 0)
+						// 	newIndex = 2;
+						// else if(i === 1)
+						// 	newIndex = 3;
+						// else if(i === 2)
+						// 	newIndex = 0;
+						// else if(i === 3)
+						// 	newIndex = 2;
+
+						// self.direction[newIndex] = true;
+					}
+
 
 				} else{
 					self.direction[i] = false;
@@ -182,7 +275,54 @@ var Enemy = function(param){
 					self.y += self.movmentSpeed[possibleDirection[0]][1];
 			}
 		}
-	}
+
+	// } else{
+	// 	for (var j = 0; j < self.movmentSpeed.length; j++) {
+
+	// 		self.direction[j] = false;
+
+	// 		if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){				
+	// 			possibleDirection.push(j);
+	// 		}
+	// 	}
+
+	// 	if (possibleDirection.length > 0) {
+
+	// 		var found = false;
+
+
+	// 		for (var i = 0; i < possibleDirection.length; i++) {
+	// 			var random = Math.random();			
+	// 			if(random < 0.5){
+
+	// 				self.direction[possibleDirection[i]] = true;
+
+	// 				self.x += self.movmentSpeed[possibleDirection[i]][0];
+	// 				self.y += self.movmentSpeed[possibleDirection[i]][1];
+
+	// 				found = true;
+	// 				break; 
+	// 			}
+	// 		}
+
+	// 		if(found === false){
+	// 				self.direction[possibleDirection[0]] = true;
+
+	// 				self.x += self.movmentSpeed[possibleDirection[0]][0];
+	// 				self.y += self.movmentSpeed[possibleDirection[0]][1];
+	// 		}
+	// 	}
+	// }
+	// 	for(var i in Explotion.list){
+	// 		var exp = Explotion.list[i];
+	// 		exp.x *= TILE_SIZE;
+	// 		exp.y *= TILE_SIZE;
+	// 		if(hitTestRectangle(self, exp)){
+	// 			self.x = -666;
+	// 			self.y = -666;
+	// 		}
+	// }
+}
 
 	// self.move();
 
@@ -256,6 +396,9 @@ var Player = function(param){
 	self.bombs = [];
 	self.amountBombsAllowed = 1;
 	self.died = false;
+	self.width = 48;
+	self.height = 56;
+
 
 	var super_update = self.update;
 	self.update = function(){
@@ -299,6 +442,8 @@ var Player = function(param){
 	}
 	
 	self.updateSpd = function(){
+
+		// hitTestRectangle(r1, r2)
 
 
 		// var rightBumper = {x:self.x+45, y:self.y+28};
@@ -352,6 +497,13 @@ var Player = function(param){
 			self.pressingRight = false;
 			self.pressingUp = false;
 			self.pressingDown = false;
+
+		for(var i in Enemy.list){
+			var albert =  Enemy.list[i];
+			if(hitTestRectangle(self, albert))
+				Player.died(self);		
+		}
+
 	}
 	
 	self.getInitPack = function(){
@@ -446,6 +598,25 @@ Player.update = function(){
 	}
 	return pack;
 }
+Player.died = function(player){
+		player.gridX = -6;
+		player.gridY = -6;
+		player.x = -666;
+		player.y = -666;
+		player.hp = player.hpMax;
+		player.explodeLength = 1;
+		player.amountBombsAllowed = 1;
+		player.died = true;
+
+		setTimeout(function() {
+			player.gridX = 1;
+			player.gridY = 1;
+			player.x = 70;
+			player.y = 70;
+			player.hp = player.hpMax;
+			player.died = false;
+		}, 2000);
+	}
 
 function checkImpact(data){
 
@@ -595,6 +766,8 @@ var Explotion = function(param){
 	self.toRemove;
 	self.burnTime = 400;
 	self.removeBlock = param.removeBlock;
+	self.width = 64;
+	self.height = 64;
 	// self.timer = param.timer;
 	// self.explosionCords = destroy(self.x, self.y, param.explodeLength);
 
@@ -605,30 +778,44 @@ var Explotion = function(param){
 			if (player.gridX === self.gridX && player.gridY === self.gridY) {
 				player.hp -= 10;
 				if(player.hp <= 0){
-					died(player);
+					Player.died(player);
 				}
 			}	
 		}
 
-	function died(player){
-		player.gridX = -6;
-		player.gridY = -6;
-		player.x = -666;
-		player.y = -666;
-		player.hp = player.hpMax;
-		player.explodeLength = 1;
-		player.amountBombsAllowed = 1;
-		player.died = true;
+		for(var i in Enemy.list){
+			var enemy = Enemy.list[i];
+			var exp = {x:self.gridX*TILE_SIZE,y:self.gridY*TILE_SIZE, width:self.width, height:self.height};
+			if (hitTestRectangle(enemy, exp)) {
+				console.log('hit');
+				enemy.x = -666;
+				enemy.y = -666;
+			} else{
+				console.log(enemy.x + ' ' + exp.x);
+			}
+		}
 
-		setTimeout(function() {
-			player.gridX = 1;
-			player.gridY = 1;
-			player.x = 70;
-			player.y = 70;
-			player.hp = player.hpMax;
-			player.died = false;
-		}, 2000);
-	}
+
+
+	// self.died = function(player){
+	// 	player.gridX = -6;
+	// 	player.gridY = -6;
+	// 	player.x = -666;
+	// 	player.y = -666;
+	// 	player.hp = player.hpMax;
+	// 	player.explodeLength = 1;
+	// 	player.amountBombsAllowed = 1;
+	// 	player.died = true;
+
+	// 	setTimeout(function() {
+	// 		player.gridX = 1;
+	// 		player.gridY = 1;
+	// 		player.x = 70;
+	// 		player.y = 70;
+	// 		player.hp = player.hpMax;
+	// 		player.died = false;
+	// 	}, 2000);
+	// }
 
 
 	self.explodeFunc = setTimeout(function() { 	
@@ -862,10 +1049,10 @@ function initMap() {
 
 initMap();
 
-				Enemy({gridX:5, gridY:5});
+				Enemy({gridX:9, gridY:4});
 				Enemy({gridX:7, gridY:7});
-				Enemy({gridX:5, gridY:5});
-				Enemy({gridX:7, gridY:7});
+				Enemy({gridX:4, gridY:5});
+				Enemy({gridX:4, gridY:3});
 
 
 setInterval(function(){

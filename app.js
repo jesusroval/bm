@@ -169,7 +169,7 @@ var Enemy = function(param){
 
 	// self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
 	self.movmentSpeed = [[-TILE_SIZE,0],[0,-TILE_SIZE],[TILE_SIZE,0],[0,TILE_SIZE]];
-	self.turn = 2;
+	self.turn = 0;
 
 	self.move = function(){
 
@@ -191,7 +191,7 @@ var Enemy = function(param){
 			var gridWall = [[-1,0],[0,-1],[1,0],[0,1]];
 			var tempDir = false;
 			var currentDirectionPossible = false;
-
+			var random = math.random();
 
 
 			for (var i = 0; i < 4; i++) {
@@ -217,7 +217,8 @@ var Enemy = function(param){
 				}
 			}
 
-			if(currentDirectionPossible === true){
+
+			else if(currentDirectionPossible === true && random > 0.1){
 				console.log('current ' + self.directionIndex);
 				self.x += self.movmentSpeed[self.directionIndex][0];
 				self.y += self.movmentSpeed[self.directionIndex][1];
@@ -227,7 +228,7 @@ var Enemy = function(param){
 				for (var i = 0; i < possibleDirection.length; i++) {
 					var random = Math.random();
 
-					if(random > 0.6){
+					if(random > 0.5){
 					self.directionIndex = possibleDirection[i];
 					self.x += self.movmentSpeed[possibleDirection[i]][0];
 					self.y += self.movmentSpeed[possibleDirection[i]][1];

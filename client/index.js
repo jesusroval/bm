@@ -21,6 +21,8 @@ var oldX;
 var oldY;
 var aPlayer = false;
 
+var interpollation = 6;
+
 	pressingRight = false;
 	pressingLeft = false;
 	pressingUp = false;
@@ -127,17 +129,37 @@ function animate() {
 						var diff = tempPlayer.serverX - tempPlayer.obj.x;
 
 
-						tempPlayer.obj.x += diff/5;
+						tempPlayer.obj.x += diff/interpollation;
 					}
 					if(tempPlayer.serverY !== tempPlayer.obj.y){
 						var diff = tempPlayer.serverY - tempPlayer.obj.y;
-						tempPlayer.obj.y += diff/5;
+						tempPlayer.obj.y += diff/interpollation;
 					}
 				} else{
 					tempPlayer.obj.x = tempPlayer.serverX;
 					tempPlayer.obj.y = tempPlayer.serverY;
 				}							
 			}
+
+			for(var i in Enemy.list){
+				tempEnemy = Enemy.list[i];
+				// if(tempPlayer.died === false){
+					if(tempEnemy.serverX !== tempEnemy.obj.x){
+						var diff = tempEnemy.serverX - tempEnemy.obj.x;
+
+
+						tempEnemy.obj.x += diff/interpollation;
+					}
+					if(tempEnemy.serverY !== tempEnemy.obj.y){
+						var diff = tempEnemy.serverY - tempEnemy.obj.y;
+						tempEnemy.obj.y += diff/interpollation;
+					}
+				// }
+				//  else{
+				// 	tempEnemy.obj.x = tempEnemy.serverX;
+				// 	tempEnemy.obj.y = tempEnemy.serverY;
+				// }							
+			}			
 		}	
 
 	renderer.render(stage);
@@ -269,7 +291,7 @@ var Explotion = function(initPack){
 		stage.addChild(self.obj);
 
 
-
+ 
 	Explotion.list[self.id] = self;		
 	return self;
 }
@@ -344,7 +366,8 @@ var Enemy = function(initPack){
 	self.x = initPack.x;
 	self.y = initPack.y;
 
-
+	self.serverX = initPack.x;
+	self.serverY = initPack.y;
 
 	self.obj = new PIXI.Sprite.fromImage('/client/img/bat.png');
 	
@@ -420,8 +443,8 @@ socket.on('update',function(data){
 			var pack = data.enemy[i];
 			var e = Enemy.list[pack.id];
 
-			e.obj.x = pack.x;
-			e.obj.y = pack.y;
+			e.serverX = pack.x;
+			e.serverY = pack.y;
 
 		}
 	} else{

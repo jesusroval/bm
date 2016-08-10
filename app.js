@@ -24,15 +24,15 @@ var explotionOffSetY = 28;
 var asp = [];
 
 	var array =[1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
-				1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,10,1,
-				1 ,0 ,1 ,10,1 ,0 ,1 ,10 ,1 ,2 ,1,
-				1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,2 ,0 ,1,
-				1 ,11,1 ,2 ,1 ,0 ,1 ,2 ,1 ,0 ,1,
-				1 ,0 ,0 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,1,
-				1 ,2 ,1 ,10,1 ,2 ,1 ,2 ,1 ,0 ,1,
-				1 ,0 ,0 ,2 ,2 ,0 ,0 ,0 ,2 ,0 ,1,
-				1 ,0 ,1 ,0 ,1 ,2 ,1 ,0 ,1 ,0 ,1,
-				1 ,11,0 ,0 ,0 ,2 ,2 ,0 ,0 ,10,1,				
+				1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,0 ,1,
+				1 ,0 ,1 ,10,1 ,0 ,1 ,10,1 ,0 ,1,
+				1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,0 ,0 ,1,
+				1 ,0 ,1 ,2 ,1 ,0 ,1 ,2 ,1 ,0 ,1,
+				1 ,0 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,0 ,1,
+				1 ,0 ,1 ,0 ,1 ,2 ,1 ,2 ,1 ,0 ,1,
+				1 ,0 ,2 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,1,
+				1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1,
+				1 ,11,0 ,0 ,0 ,0 ,2 ,0 ,0 ,10,1,				
 				1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
 				];
 
@@ -103,7 +103,7 @@ isPositionWall = function(bumper){
 
 		var gridX = Math.floor(bumper.x / TILE_SIZE);
 		var gridY = Math.floor(bumper.y / TILE_SIZE);
-
+		// console.log(bumper);
 
 		if(gridX < 0 || gridX >= array2D[0].length)
 			return true;
@@ -153,8 +153,8 @@ var Entity = function(param){
 var Enemy = function(param){
 	var self = {};
 	self.id = Math.random();
-	self.x = (param.gridX * TILE_SIZE) + 30;
-	self.y = (param.gridY * TILE_SIZE) + 30;
+	self.x = (param.gridX * TILE_SIZE) + 16;
+	self.y = (param.gridY * TILE_SIZE) + 16;
 	self.width = 32;
 	self.height = 32;
 	self.gridX = 1;
@@ -162,167 +162,95 @@ var Enemy = function(param){
 
 	self.maxSpd = 4;
 	//left, up, right, down
-	self.direction = [true, false, false, false];
-	self.isWall = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd*8,0],[0,self.maxSpd*8]];
-	self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
-	
+	self.direction = [false, true, false, false];
+	self.directionIndex = 0;
 
+	self.isWall = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd*8,0],[0,self.maxSpd*8]];
+
+	// self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
+	self.movmentSpeed = [[-TILE_SIZE,0],[0,-TILE_SIZE],[TILE_SIZE,0],[0,TILE_SIZE]];
+	self.turn = 2;
 
 	self.move = function(){
-	
-	var possibleDirection = [];
-
-	// if(Math.random() < 0.98){
 
 
+		if(self.turn === 16){
+			console.log(self.turn);
+			self.turn = 0;
+			var possibleDirection = [];
 
-		for (var i = 0; i < 4; i++) {
+			// if(Math.random() < 0.98){
 
+			var gridX = Math.floor((self.x) / TILE_SIZE);
+			var gridY = Math.floor((self.y) / TILE_SIZE);
 
-			if(self.direction[i]){
+			var gridCordX = gridX * TILE_SIZE;
+			var gridCordY = gridY * TILE_SIZE;
 
-				var oldX = self.x;
-				var oldY = self.y;
-
-
-
-
-				if(!isPositionWall({x:self.x + self.isWall[i][0], y:self.y + self.isWall[i][1]})){
-					var change = Math.random();
-					var changeInt = 1;
-
-					if(change > 0.01){
-					self.x += self.movmentSpeed[i][0];
-					self.y += self.movmentSpeed[i][1];
-					break;
-					} else{
-
-						self.direction[i] = false;
-
-					for (var j = 0; j < self.movmentSpeed.length; j++) {
-
-						if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){
-							
-							possibleDirection.push(j);
-							// self.direction[j] = true;
-
-							// self.x += self.movmentSpeed[j][0];
-							// self.y += self.movmentSpeed[j][1];
-							// break; 
-
-						}
-					}
+			var lastWall = [];	
+			var gridWall = [[-1,0],[0,-1],[1,0],[0,1]];
+			var tempDir = false;
+			var currentDirectionPossible = false;
 
 
-						// var newIndex = 0;
 
-						// if(i === 0)
-						// 	newIndex = 2;
-						// else if(i === 1)
-						// 	newIndex = 3;
-						// else if(i === 2)
-						// 	newIndex = 0;
-						// else if(i === 3)
-						// 	newIndex = 2;
+			for (var i = 0; i < 4; i++) {
+				
+				gridWall[i][0] += gridX;
+				gridWall[i][1] += gridY;
+				var tempWall = [gridWall[i][0] * TILE_SIZE, gridWall[i][1] * TILE_SIZE];
+				lastWall.push(tempWall);
+			}
+			
 
-						// self.direction[newIndex] = true;
-					}
+			for (var i = 0; i < lastWall.length; i++) {
+				if(isPositionWall({x:lastWall[i][0], y:lastWall[i][1]})){
 
 
 				} else{
-					self.direction[i] = false;
 
-					for (var j = 0; j < self.movmentSpeed.length; j++) {
-						if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){
-							
-							possibleDirection.push(j);
-							// self.direction[j] = true;
-
-							// self.x += self.movmentSpeed[j][0];
-							// self.y += self.movmentSpeed[j][1];
-							// break; 
-
-						}
+					if(self.directionIndex === i){
+						currentDirectionPossible = true;
+					} else{
+						possibleDirection.push(i);
 					}
 				}
 			}
-		}
 
+			if(currentDirectionPossible === true){
+				console.log('current ' + self.directionIndex);
+				self.x += self.movmentSpeed[self.directionIndex][0];
+				self.y += self.movmentSpeed[self.directionIndex][1];
+			} else if(possibleDirection.length > 0){
+					console.log('new   ' + possibleDirection);
 
-		if (possibleDirection.length > 0) {
+				for (var i = 0; i < possibleDirection.length; i++) {
+					var random = Math.random();
 
-			var found = false;
-
-
-			for (var i = 0; i < possibleDirection.length; i++) {
-				var random = Math.random();			
-				if(random < 0.5){
-
-					self.direction[possibleDirection[i]] = true;
-
+					if(random > 0.6){
+					self.directionIndex = possibleDirection[i];
 					self.x += self.movmentSpeed[possibleDirection[i]][0];
 					self.y += self.movmentSpeed[possibleDirection[i]][1];
-
-					found = true;
-					break; 
+					break;
+					}
 				}
-			}
 
-			if(found === false){
-					self.direction[possibleDirection[0]] = true;
-
-					self.x += self.movmentSpeed[possibleDirection[0]][0];
-					self.y += self.movmentSpeed[possibleDirection[0]][1];
+			} else{
+				console.log('failurererer');
 			}
+		} 
+		// else if(self.turn === ){
+
+		// }else if(self.turn === ){
+
+		// }else if(self.turn === ){
+
+		// }
+		else{
+			self.turn += 1;
 		}
+	}
 
-	// } else{
-	// 	for (var j = 0; j < self.movmentSpeed.length; j++) {
-
-	// 		self.direction[j] = false;
-
-	// 		if(!isPositionWall({x:self.x + self.isWall[j][0], y:self.y + self.isWall[j][1]})){				
-	// 			possibleDirection.push(j);
-	// 		}
-	// 	}
-
-	// 	if (possibleDirection.length > 0) {
-
-	// 		var found = false;
-
-
-	// 		for (var i = 0; i < possibleDirection.length; i++) {
-	// 			var random = Math.random();			
-	// 			if(random < 0.5){
-
-	// 				self.direction[possibleDirection[i]] = true;
-
-	// 				self.x += self.movmentSpeed[possibleDirection[i]][0];
-	// 				self.y += self.movmentSpeed[possibleDirection[i]][1];
-
-	// 				found = true;
-	// 				break; 
-	// 			}
-	// 		}
-
-	// 		if(found === false){
-	// 				self.direction[possibleDirection[0]] = true;
-
-	// 				self.x += self.movmentSpeed[possibleDirection[0]][0];
-	// 				self.y += self.movmentSpeed[possibleDirection[0]][1];
-	// 		}
-	// 	}
-	// }
-	// 	for(var i in Explotion.list){
-	// 		var exp = Explotion.list[i];
-	// 		exp.x *= TILE_SIZE;
-	// 		exp.y *= TILE_SIZE;
-	// 		if(hitTestRectangle(self, exp)){
-	// 			self.x = -666;
-	// 			self.y = -666;
-	// 		}
-	// }
-}
 
 	// self.move();
 
@@ -487,7 +415,7 @@ var Player = function(param){
 				}
 
 
-				console.log(array2D[pU.gridY][pU.gridX]);
+				// console.log(array2D[pU.gridY][pU.gridX]);
 				delete PowerUp.list[i];
 				removePack.powerUp.push(pU.id);
 				array2D[pU.gridY][pU.gridX] = 0;	
@@ -787,11 +715,11 @@ var Explotion = function(param){
 			var enemy = Enemy.list[i];
 			var exp = {x:self.gridX*TILE_SIZE,y:self.gridY*TILE_SIZE, width:self.width, height:self.height};
 			if (hitTestRectangle(enemy, exp)) {
-				console.log('hit');
+				// console.log('hit');
 				enemy.x = -666;
 				enemy.y = -666;
 			} else{
-				console.log(enemy.x + ' ' + exp.x);
+				// console.log(enemy.x + ' ' + exp.x);
 			}
 		}
 
@@ -867,6 +795,15 @@ var Bomb = function(param){
 	self.explodeLength = param.explodeLength;
 	self.parent = param.parent;
 
+
+	self.gridX = Math.floor(self.x / TILE_SIZE);
+	self.gridY = Math.floor(self.y / TILE_SIZE);
+
+	array2D[self.gridY][self.gridX] = 1;
+
+
+
+
 	self.explodeFunc = setTimeout(function() { 
 		self.toRemove = true;
 		delete self.parent.bombs[self];
@@ -875,7 +812,10 @@ var Bomb = function(param){
 					self.y,
 					self.explodeLength
 					);
+		array2D[self.gridY][self.gridX] = 0;
 	}, self.fuse);
+
+
 
 	self.getInitPack = function(){
 		return {
@@ -1049,10 +989,10 @@ function initMap() {
 
 initMap();
 
-				Enemy({gridX:9, gridY:4});
-				Enemy({gridX:7, gridY:7});
-				Enemy({gridX:4, gridY:5});
-				Enemy({gridX:4, gridY:3});
+				Enemy({gridX:10, gridY:7});
+				// Enemy({gridX:7, gridY:7});
+				// Enemy({gridX:4, gridY:5});
+				// Enemy({gridX:4, gridY:3});
 
 
 setInterval(function(){

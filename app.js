@@ -169,13 +169,15 @@ var Enemy = function(param){
 
 	// self.movmentSpeed = [[-self.maxSpd,0],[0,-self.maxSpd],[self.maxSpd,0],[0,self.maxSpd]];
 	self.movmentSpeed = [[-TILE_SIZE,0],[0,-TILE_SIZE],[TILE_SIZE,0],[0,TILE_SIZE]];
-	self.turn = 0;
+	self.turn = Math.floor(Math.random()*16);
+
+
 
 	self.move = function(){
 
 
 		if(self.turn === 16){
-			console.log(self.turn);
+
 			self.turn = 0;
 			var possibleDirection = [];
 
@@ -191,7 +193,7 @@ var Enemy = function(param){
 			var gridWall = [[-1,0],[0,-1],[1,0],[0,1]];
 			var tempDir = false;
 			var currentDirectionPossible = false;
-			var random = math.random();
+			var random = Math.random();
 
 
 			for (var i = 0; i < 4; i++) {
@@ -217,13 +219,24 @@ var Enemy = function(param){
 				}
 			}
 
+			if(random < 0.6 && possibleDirection.length > 1){
+					for (var i = 0; i < possibleDirection.length; i++) {
+					var random = Math.random();
 
-			else if(currentDirectionPossible === true && random > 0.1){
-				console.log('current ' + self.directionIndex);
+					if(random > 0.5){
+					self.directionIndex = possibleDirection[i];
+					self.x += self.movmentSpeed[possibleDirection[i]][0];
+					self.y += self.movmentSpeed[possibleDirection[i]][1];
+					break;
+					}
+				}
+			}
+			else if(currentDirectionPossible === true){
+				// console.log(random + ':r  current ' + self.directionIndex);
 				self.x += self.movmentSpeed[self.directionIndex][0];
 				self.y += self.movmentSpeed[self.directionIndex][1];
 			} else if(possibleDirection.length > 0){
-					console.log('new   ' + possibleDirection);
+					// console.log('new   ' + possibleDirection);
 
 				for (var i = 0; i < possibleDirection.length; i++) {
 					var random = Math.random();
@@ -237,7 +250,7 @@ var Enemy = function(param){
 				}
 
 			} else{
-				console.log('failurererer');
+				console.log('failed enemy movment');
 			}
 		} 
 		// else if(self.turn === ){
@@ -991,9 +1004,9 @@ function initMap() {
 initMap();
 
 				Enemy({gridX:10, gridY:7});
-				// Enemy({gridX:7, gridY:7});
-				// Enemy({gridX:4, gridY:5});
-				// Enemy({gridX:4, gridY:3});
+				Enemy({gridX:7, gridY:7});
+				Enemy({gridX:4, gridY:5});
+				Enemy({gridX:4, gridY:3});
 
 
 setInterval(function(){

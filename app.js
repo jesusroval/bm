@@ -157,8 +157,10 @@ var Enemy = function(param){
 	self.y = (param.gridY * TILE_SIZE) + 16;
 	self.width = 32;
 	self.height = 32;
-	self.gridX = 1;
-	self.gridY = 1;
+	self.dead = false;
+
+	// self.gridX = param.gridX;
+	// self.gridY = param.gridY;
 
 	self.maxSpd = 4;
 	//left, up, right, down
@@ -175,8 +177,7 @@ var Enemy = function(param){
 
 	self.move = function(){
 
-
-		if(self.turn === 16){
+		if(self.turn === 16 && self.dead === false){
 
 			self.turn = 0;
 			var possibleDirection = [];
@@ -499,7 +500,10 @@ Player.onConnect = function(socket){
 	socket.emit('init',{
 		player:Player.getAllInitPack(),
 		tile: wtf,
+		
 	});
+
+
 
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
@@ -657,9 +661,9 @@ function changeMap(data){
 }
 
 function timedExplotion(data){
-	setTimeout(function(){
+	// setTimeout(function(){
 		Explotion(data);
-	}, data.timer);
+	// }, data.timer);
 }
 var PowerUp = function(param){
 	var self = Entity(param);
@@ -712,28 +716,40 @@ var Explotion = function(param){
 	self.height = 64;
 	// self.timer = param.timer;
 	// self.explosionCords = destroy(self.x, self.y, param.explodeLength);
-
+	// Math.floor()
 
 		for(var i in Player.list){
 			var player = Player.list[i];
 
 			if (player.gridX === self.gridX && player.gridY === self.gridY) {
-				player.hp -= 10;
-				if(player.hp <= 0){
+								console.log('hit  player  ' + player.gridX + ' ' + self.gridX);
+
+				// player.hp -= 10;
+				// if(player.hp <= 0){
 					Player.died(player);
-				}
+				// }
 			}	
 		}
-
+							console.log(' SELF   ' + self.gridX + ' ' + self.gridY);
+	// var exp = {x:self.gridX*TILE_SIZE,y:self.gridY*TILE_SIZE, width:self.width, height:self.height};
 		for(var i in Enemy.list){
 			var enemy = Enemy.list[i];
-			var exp = {x:self.gridX*TILE_SIZE,y:self.gridY*TILE_SIZE, width:self.width, height:self.height};
-			if (hitTestRectangle(enemy, exp)) {
-				// console.log('hit');
-				enemy.x = -666;
-				enemy.y = -666;
+
+							// console.log('miss  ENEMY   ' + enemy.gridX + ' ' + enemy.gridY);
+
+			var gridX = Math.floor((enemy.x) / TILE_SIZE);
+			var gridY = Math.floor((enemy.y) / TILE_SIZE);
+
+			if (gridX === self.gridX && gridY === self.gridY) {
+				// console.log('hit  ENEMY  ' + enemy.gridX + ' ' + self.gridX);
+				enemy.dead = true;
+				enemy.x = 0;
+				enemy.y = 0;
+				delete Enemy.list[enemy];
+				removePack.enemy.push(enemy.id);
+
 			} else{
-				// console.log(enemy.x + ' ' + exp.x);
+				 // console.log(enemy.x + ' ' + self.gridX);
 			}
 		}
 
@@ -937,6 +953,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('signIn',function(data){
 		isValidPassword(data,function(res){
 			if(res){
+				// socket.emit('map', {array2D: array2D});
 				Player.onConnect(socket);
 
 				socket.emit('signInResponse',{success:true});
@@ -981,7 +998,7 @@ io.sockets.on('connection', function(socket){
 });
 
 var initPack = {player:[], bomb:[], explotion:[],serverArray:array2D, tile:[], powerUp:[], enemy:[]};
-var removePack = {player:[], bomb:[], explotion:[], tile:[], powerUp:[]};
+var removePack = {player:[], bomb:[], explotion:[], tile:[], powerUp:[], enemy:[]};
 
 function initMap() {
 	for (var i = 0; i < array2D[0].length; i++) {
@@ -1016,6 +1033,7 @@ setInterval(function(){
 		explotion:Explotion.update(),
 		tile:Tile.getAllInitPack(),
 		enemy:Enemy.update(),
+		array2D:array2D,
 	}
 
 
@@ -1038,6 +1056,7 @@ setInterval(function(){
 	removePack.explotion = [];
 	removePack.tile = [];
 	removePack.powerUp = [];
+	removePack.enemy = [];
 	
 },1000/25);
 

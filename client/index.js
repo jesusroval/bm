@@ -123,12 +123,12 @@ function animate() {
 	requestAnimationFrame(animate);
 		if(aPlayer){
 			for(var i in Player.list){
+
 				tempPlayer = Player.list[i];
+
 				if(tempPlayer.died === false){
 					if(tempPlayer.serverX !== tempPlayer.obj.x){
 						var diff = tempPlayer.serverX - tempPlayer.obj.x;
-
-
 						tempPlayer.obj.x += diff/interpollation;
 					}
 					if(tempPlayer.serverY !== tempPlayer.obj.y){
@@ -142,18 +142,20 @@ function animate() {
 			}
 
 			for(var i in Enemy.list){
-				tempEnemy = Enemy.list[i];
-				// if(tempPlayer.died === false){
-					if(tempEnemy.serverX !== tempEnemy.obj.x){
-						var diff = tempEnemy.serverX - tempEnemy.obj.x;
+				if(Enemy.list[i]){
+					tempEnemy = Enemy.list[i];
+					// if(tempPlayer.died === false){
+						if(tempEnemy.serverX !== tempEnemy.obj.x){
+							var diff = tempEnemy.serverX - tempEnemy.obj.x;
 
 
-						tempEnemy.obj.x += diff/interpollation;
-					}
-					if(tempEnemy.serverY !== tempEnemy.obj.y){
-						var diff = tempEnemy.serverY - tempEnemy.obj.y;
-						tempEnemy.obj.y += diff/interpollation;
-					}
+							tempEnemy.obj.x += diff/interpollation;
+						}
+						if(tempEnemy.serverY !== tempEnemy.obj.y){
+							var diff = tempEnemy.serverY - tempEnemy.obj.y;
+							tempEnemy.obj.y += diff/interpollation;
+						}
+				}
 				// }
 				//  else{
 				// 	tempEnemy.obj.x = tempEnemy.serverX;
@@ -388,6 +390,10 @@ Enemy.list = {};
 
 var selfId = null;
 
+// socket.on('map', function(data){
+// 	console.log('map ' + data);
+// });
+
 socket.on('init',function(data){
 	
 	// if(data.tile.length > 0 && !map){
@@ -404,6 +410,11 @@ socket.on('init',function(data){
 
 	// 	}				
 	// }
+
+	if(data.array2D){
+		alert('initntint');
+	}
+
 	if (data.powerUp) {
 		for (var i = 0; i < data.powerUp.length; i++) {
 			new PowerUp(data.powerUp[i]);
@@ -442,9 +453,10 @@ socket.on('update',function(data){
 		for (var i = 0; i < data.enemy.length; i++) {
 			var pack = data.enemy[i];
 			var e = Enemy.list[pack.id];
-
-			e.serverX = pack.x;
-			e.serverY = pack.y;
+			if(e){
+				e.serverX = pack.x;
+				e.serverY = pack.y;
+			}
 
 		}
 	} else{
@@ -500,6 +512,9 @@ socket.on('update',function(data){
 });
 
 socket.on('remove',function(data){
+
+
+
 	for(var i = 0 ; i < data.player.length; i++){
 		var p = Player.list[data.player[i]];
 		stage.removeChild(p.obj);
@@ -533,7 +548,16 @@ socket.on('remove',function(data){
 			delete PowerUp.list[data.powerUp[i]];
 		}
 
-	}			
+	}
+
+
+		for(var i = 0 ; i < data.enemy.length; i++){
+		var e = Enemy.list[data.enemy[i]];
+		stage.removeChild(e.obj);
+		delete Enemy.list[data.enemy[i]];
+
+	}
+			
 });
 
 var drawMap = function(){

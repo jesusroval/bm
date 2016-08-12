@@ -305,7 +305,7 @@ Enemy.update = function(){
 	for(var i in Enemy.list){
 		var enemy = Enemy.list[i];
 
-		enemy.move();
+		// enemy.move();
 		// bomb.update();
 		// if(explotion.toRemove){
 		// 	delete Enemy.list[i];
@@ -326,21 +326,21 @@ var Player = function(param){
 	self.pressingAttack = false;
 	self.dropBomb = false;
 	self.mouseAngle = 0;
-	self.maxSpd = 5;
+	self.maxSpd = 3;
 	self.hp = 10;
 	self.hpMax = 10;
 	self.score = 0;
 	self.gridX = 1;
 	self.gridY = 1;
-	self.x = 70;
-	self.y = 70;
+	self.x = 96;
+	self.y = 96;
 	self.killed = false;
 	self.explodeLength = 1;
 	self.bombs = [];
 	self.amountBombsAllowed = 1;
 	self.died = false;
-	self.width = 48;
-	self.height = 56;
+	self.width = 30;
+	self.height = 30;
 
 
 	var super_update = self.update;
@@ -353,11 +353,11 @@ var Player = function(param){
 			self.shootBullet(self.mouseAngle);
 		}
 
-		if(self.dropBomb && self.amountBombsAllowed > self.bombs.length){
+		if(self.dropBomb && self.amountBombsAllowed > self.bombs.length && self.x > 0 && self.y > 0){
 			
 			var tempBomb = Bomb(
-					{x:self.x,
-					y:self.y,
+					{x:self.x - 16,
+					y:self.y - 16,
 					explodeLength:self.explodeLength,
 					parent:self,
 					});
@@ -399,25 +399,48 @@ var Player = function(param){
 		var topBumper = {x:self.x+24, y:self.y};
 		var bottomBumper = {x:self.x+24, y:self.y +56};
 
-		if(self.pressingRight && !isPositionWall({x:self.x + TILE_SIZE, y:self.y})){
-			self.x += TILE_SIZE;
-			self.gridX += 1;
+
+
+
+		if(
+			self.pressingRight 
+			&& !isPositionWall({x:self.x + self.maxSpd + self.width, y:self.y - self.height}) 
+			&& !isPositionWall({x:self.x + self.maxSpd + self.width, y:self.y + self.height})){
+
+			self.x += self.maxSpd;
+			// self.gridX += 1;
 
 		}
-		else if(self.pressingLeft && !isPositionWall({x:self.x - TILE_SIZE, y:self.y})){
-			self.x -= TILE_SIZE;
-			self.gridX -= 1;
+		else if(
+			self.pressingLeft 
+			&& !isPositionWall({x:self.x - self.maxSpd - self.width, y:self.y + self.height})
+			&& !isPositionWall({x:self.x - self.maxSpd - self.width, y:self.y - self.height})
+			){
+			self.x -= self.maxSpd;
+			// self.gridX -= 1;
 		}
 
 		
-		if(self.pressingUp && !isPositionWall({x:self.x, y:self.y - TILE_SIZE})){
-			self.y -= TILE_SIZE;
-			self.gridY -= 1;
+		if(
+			self.pressingUp 
+			&& !isPositionWall({x:self.x + self.width, y:self.y - self.maxSpd - self.height})
+			&& !isPositionWall({x:self.x - self.width, y:self.y - self.maxSpd - self.height})
+			){
+			self.y -= self.maxSpd;
+			// self.gridY -= 1;
 		}
-		else if(self.pressingDown && !isPositionWall({x:self.x, y:self.y + TILE_SIZE})){
-			self.y += TILE_SIZE;
-			self.gridY += 1;
+		else if(
+			self.pressingDown 
+			&& !isPositionWall({x:self.x - self.width, y:self.y + self.maxSpd + self.height})
+			&& !isPositionWall({x:self.x + self.width, y:self.y + self.maxSpd + self.height})){
+			self.y += self.maxSpd;
+			// self.gridY += 1;
 		}
+
+		self.gridX = Math.floor(self.x/TILE_SIZE);
+		self.gridY = Math.floor(self.y/TILE_SIZE);
+
+		console.log(self.gridX + ' ' + self.gridY);
 
 		for(var i in PowerUp.list){
 			var pU = PowerUp.list[i];
@@ -436,10 +459,11 @@ var Player = function(param){
 				array2D[pU.gridY][pU.gridX] = 0;	
 			}
 		}		
-			self.pressingLeft = false;
-			self.pressingRight = false;
-			self.pressingUp = false;
-			self.pressingDown = false;
+			// self.pressingLeft = false;
+			// self.pressingRight = false;
+			// self.pressingUp = false;
+			// self.pressingDown = false;
+
 
 		for(var i in Enemy.list){
 			var albert =  Enemy.list[i];
@@ -557,8 +581,8 @@ Player.died = function(player){
 		setTimeout(function() {
 			player.gridX = 1;
 			player.gridY = 1;
-			player.x = 70;
-			player.y = 70;
+			player.x = 96;
+			player.y = 96;
 			player.hp = player.hpMax;
 			player.died = false;
 		}, 2000);
@@ -614,7 +638,7 @@ var destroy = function(x, y, explodeLength){
 	var upHit = false;
 	var bottomHit = false;
 
-	console.log('destroy ' + explodeLength);
+	// console.log('destroy ' + explodeLength);
 
 	var right = {x:(gridX + i), y:gridY, timer:timer*i, removeBlock:false, hit: false,};
 	var down = {x:gridX, y:(gridY + i), timer:timer*i, removeBlock:false, hit: false,};
@@ -829,7 +853,7 @@ var Bomb = function(param){
 	self.gridX = Math.floor(self.x / TILE_SIZE);
 	self.gridY = Math.floor(self.y / TILE_SIZE);
 
-	array2D[self.gridY][self.gridX] = 1;
+	// array2D[self.gridY][self.gridX] = 66;
 
 
 
@@ -1058,7 +1082,7 @@ setInterval(function(){
 	removePack.powerUp = [];
 	removePack.enemy = [];
 	
-},1000/25);
+},1000/60);
 
 
 

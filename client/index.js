@@ -20,7 +20,7 @@ var bombArray = [];
 var oldX;
 var oldY;
 var aPlayer = false;
-
+var wantUpdate = false;
 var interpollation = 6;
 
 	pressingRight = false;
@@ -30,6 +30,7 @@ var interpollation = 6;
 
 var explotionOffSetX = 24; 
 var explotionOffSetY = 28;
+var gridBtn = document.getElementById('gridBtn');
 //sign
 var signDiv = document.getElementById('signDiv');
 // var signDivUsername = document.getElementById('signDiv-username');
@@ -57,6 +58,56 @@ var signDivSignIn = document.getElementById('signDiv-signIn');
 // 				return array2D[gridY][gridX];
 // 			}
 
+
+
+
+var gridMap = function(){
+	// var gridMap = "<table border=1>";
+	var table = document.createElement('table');
+	table.id = 'gridMap';
+	table.border = 1;
+  	var tableBody = document.createElement('tbody');
+
+	for (var i = 0; i < array2D[0].length; i++) {
+		// gridMap += '<tr>';
+		var row = document.createElement('tr');
+
+		// document.createElement('')
+		for (var j = 0; j < array2D.length; j++) {
+		    var cell = document.createElement('td');
+		    cell.appendChild(document.createTextNode(array2D[j][i]));
+      		row.appendChild(cell);
+			// gridMap += "<td>"+array2D[j][i]+"</td>";
+				// Tile({gridX:j, gridY:i, type:1,});	
+		}
+	    tableBody.appendChild(row);
+
+		// gridMap += "</tr>";
+	}
+
+	table.appendChild(tableBody);
+  	document.body.appendChild(table);
+	wantUpdate = true;
+
+	// gridMap += "</table>";	
+
+	// document.appendChild(gridMap);
+}
+
+// gridBtn.onclick = gridMap;
+
+var gridMapUpdate = function(){
+	var gridMap = document.getElementById('gridMap').rows;
+	var y;
+	for (var i = 0; i < 11; i++) {	
+		for (var j = 0; j < 11; j++) {
+			y = gridMap[i].cells;
+			y[j].innerHTML = array2D[i][j];
+		}
+	}
+	// console.log('map updated');
+
+}
 
 
 signDivSignIn.onclick = function(){
@@ -128,12 +179,24 @@ function animate() {
 
 				if(tempPlayer.died === false){
 					if(tempPlayer.serverX !== tempPlayer.obj.x){
-						var diff = tempPlayer.serverX - tempPlayer.obj.x;
-						tempPlayer.obj.x += diff/interpollation;
+
+						tempPlayer.obj.x = tempPlayer.serverX;
+						// var diff = tempPlayer.serverX - tempPlayer.obj.x;
+						// tempPlayer.obj.x += diff/interpollation;
+						// if(tempPlayer.serverX > tempPlayer.obj.x)
+						// 	tempPlayer.obj.x += 2;
+
+						// if(tempPlayer.serverX < tempPlayer.obj.x)
+						// 	tempPlayer.obj.x -= 2;
+
+
 					}
 					if(tempPlayer.serverY !== tempPlayer.obj.y){
-						var diff = tempPlayer.serverY - tempPlayer.obj.y;
-						tempPlayer.obj.y += diff/interpollation;
+						// var diff = tempPlayer.serverY - tempPlayer.obj.y;
+						// tempPlayer.obj.y += diff/interpollation;
+						// tempPlayer.obj.y += 2;
+						tempPlayer.obj.y = tempPlayer.serverY;
+
 					}
 				} else{
 					tempPlayer.obj.x = tempPlayer.serverX;
@@ -179,6 +242,8 @@ var Player = function(initPack){
 	self.map = initPack.map;
 	self.died;
 
+	self.speed = 4;
+
 	self.serverX = initPack.x;
 	self.serverY = initPack.y;
 	// self.nowX;
@@ -193,12 +258,14 @@ var Player = function(initPack){
 	if(selfId === null){selfId = self.id};
 
 // here
-	self.obj = new PIXI.Sprite.fromImage('/client/img/player.png');
-	self.obj.scale.x = 2;
-	self.obj.scale.y = 2;
-	self.obj.x = initPack.x;
-	self.obj.y = initPack.y;
+	self.obj = new PIXI.Sprite.fromImage('/client/img/pirate.png');
+	// self.obj.scale.x = 2;
+	// self.obj.scale.y = 2;
+	self.obj.x = initPack.x - 32;
+	self.obj.y = initPack.y - 32;
 	stage.addChild(self.obj);
+
+
 
 	// working but have instant death
 	// //Create the health bar
@@ -326,8 +393,8 @@ var Bomb = function(initPack){
 	self.y = initPack.y;
 
 	self.obj = new PIXI.Sprite.fromImage('/client/img/bomb.png');
-	self.obj.x = initPack.x + 10;
-	self.obj.y = initPack.y + 20;
+	self.obj.x = initPack.x;
+	self.obj.y = initPack.y;
 	stage.addChild(self.obj);
 
 	Bomb.list[self.id] = self;		
@@ -449,6 +516,11 @@ socket.on('bombTest', function(data){
 
 socket.on('update',function(data){
 
+	array2D = data.array2D;
+
+	if(wantUpdate === true)
+		gridMapUpdate();
+
 	if(enemy === true){
 		for (var i = 0; i < data.enemy.length; i++) {
 			var pack = data.enemy[i];
@@ -490,11 +562,11 @@ socket.on('update',function(data){
 
 			if(pack.x !== undefined){
 				// p.obj.x = pack.x;
-				p.serverX = pack.x;
+				p.serverX = pack.x- 32;
 			}
 			if(pack.y !== undefined)
 				// p.obj.y = pack.y;
-				p.serverY = pack.y;			
+				p.serverY = pack.y- 32;			
 			if(pack.hp !== undefined)
 				p.hp = pack.hp;
 			// working but have instant death
@@ -573,53 +645,70 @@ var drawScore = function(){
 }
 
 document.onkeypress = function(event){
-	if(event.keyCode === 100 && pressingRight === false){	//d
+	if(event.keyCode === 100){	//d
 		socket.emit('keyPress',{inputId:'right',state:true});
 		pressingRight = true;
 	}
-	else if(event.keyCode === 115 && pressingDown === false){	//s
+	else if(event.keyCode === 115){	//s
 		socket.emit('keyPress',{inputId:'down',state:true});
 		pressingDown = true;
 	}
-	else if(event.keyCode === 97 && pressingLeft === false){
+	else if(event.keyCode === 97){
 	 //a
 		socket.emit('keyPress',{inputId:'left',state:true});
 		pressingLeft = true;
 	}
-	else if(event.keyCode === 119 && pressingDown === false) {// w
+	else if(event.keyCode === 119) {// w
 		socket.emit('keyPress',{inputId:'up',state:true});
 		pressingDown = true;
-	}
+	} else if(event.keyCode === 109){  //m
+		gridMap();
 
-console.log(event.keyCode);
+	}
+// console.log(event.keyCode);
 
 		
 }
+
+
 document.onkeyup = function(event){
 
+	// if(event.keyCode === 68){	//d
+	// 	pressingRight = false;
+	// }
+	// else if(event.keyCode === 83){	//s
+	// 	pressingDown = false;
+	// }
+	// else if(event.keyCode === 65){
+	//  //a
+	// 	pressingLeft = false;
+	// }
+	// else if(event.keyCode === 87) {// w
+	// 	pressingDown = false;
+	// }
+
+// console.log(' up ' + event.keyCode);
 	if(event.keyCode === 68){	//d
+		socket.emit('keyPress',{inputId:'right',state:false});
 		pressingRight = false;
+		console.log('dddd');
 	}
 	else if(event.keyCode === 83){	//s
+		socket.emit('keyPress',{inputId:'down',state:false});
 		pressingDown = false;
 	}
 	else if(event.keyCode === 65){
 	 //a
+		socket.emit('keyPress',{inputId:'left',state:false});
 		pressingLeft = false;
 	}
 	else if(event.keyCode === 87) {// w
+		socket.emit('keyPress',{inputId:'up',state:false});
 		pressingDown = false;
 	}
 
 
-	// if(event.keyCode === 68)	//d
-	// 	socket.emit('keyPress',{inputId:'right',state:false});
-	// else if(event.keyCode === 83)	//s
-	// 	socket.emit('keyPress',{inputId:'down',state:false});
-	// else if(event.keyCode === 65) //a
-	// 	socket.emit('keyPress',{inputId:'left',state:false});
-	// else if(event.keyCode === 87) // w
-	// 	socket.emit('keyPress',{inputId:'up',state:false});
+
 	if(event.keyCode === 32) //space
 		socket.emit('keyPress',{inputId:'bomb',state:true});
 }

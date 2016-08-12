@@ -162,7 +162,7 @@ var Enemy = function(param){
 	// self.gridX = param.gridX;
 	// self.gridY = param.gridY;
 
-	self.maxSpd = 4;
+	self.maxSpd = 10;
 	//left, up, right, down
 	self.direction = [false, true, false, false];
 	self.directionIndex = 0;
@@ -177,7 +177,7 @@ var Enemy = function(param){
 
 	self.move = function(){
 
-		if(self.turn === 16 && self.dead === false){
+		if(self.turn === 64 && self.dead === false){
 
 			self.turn = 0;
 			var possibleDirection = [];
@@ -305,7 +305,7 @@ Enemy.update = function(){
 	for(var i in Enemy.list){
 		var enemy = Enemy.list[i];
 
-		// enemy.move();
+		enemy.move();
 		// bomb.update();
 		// if(explotion.toRemove){
 		// 	delete Enemy.list[i];

@@ -155,6 +155,7 @@ socket.on('addToChat',function(data){
 function game(){
 
 	var renderer = new PIXI.WebGLRenderer(704, 704);
+	// var renderer = new PIXI.WebGLRenderer(768, 768);
 	
 	document.body.appendChild(renderer.view);
 	
@@ -333,6 +334,11 @@ var PowerUp = function(initPack){
 		stage.addChild(self.obj);				
 	} else if(self.type === 'amountUp'){
 		self.obj = new PIXI.Sprite.fromImage('/client/img/bu.png');
+		self.obj.position.x = (initPack.gridX * TILE_SIZE) + 16;
+		self.obj.position.y = (initPack.gridY * TILE_SIZE) + 16;
+		stage.addChild(self.obj);					
+	} else if(self.type === 'speedUp'){
+		self.obj = new PIXI.Sprite.fromImage('/client/img/skatesprite.png');
 		self.obj.position.x = (initPack.gridX * TILE_SIZE) + 16;
 		self.obj.position.y = (initPack.gridY * TILE_SIZE) + 16;
 		stage.addChild(self.obj);					
@@ -595,9 +601,10 @@ socket.on('remove',function(data){
 	}
 	for (var i = 0; i < data.bomb.length; i++) {
 		var b = Bomb.list[data.bomb[i]];
-
-		stage.removeChild(b.obj);
-		delete Bomb.list[data.bomb[i]];
+		if(b){
+			stage.removeChild(b.obj);
+			delete Bomb.list[data.bomb[i]];
+		}
 
 	}
 	for (var i = 0; i < data.explotion.length; i++) {
@@ -623,11 +630,14 @@ socket.on('remove',function(data){
 	}
 
 
-		for(var i = 0 ; i < data.enemy.length; i++){
+	for(var i = 0 ; i < data.enemy.length; i++){
 		var e = Enemy.list[data.enemy[i]];
+		
+		if (e) {
+
 		stage.removeChild(e.obj);
 		delete Enemy.list[data.enemy[i]];
-
+		}
 	}
 			
 });
@@ -648,28 +658,59 @@ document.onkeypress = function(event){
 	if(event.keyCode === 100){	//d
 		socket.emit('keyPress',{inputId:'right',state:true});
 		pressingRight = true;
-	}
-	else if(event.keyCode === 115){	//s
+	} else if(event.keyCode === 115){	//s
 		socket.emit('keyPress',{inputId:'down',state:true});
 		pressingDown = true;
-	}
-	else if(event.keyCode === 97){
+	} else if(event.keyCode === 97){
 	 //a
 		socket.emit('keyPress',{inputId:'left',state:true});
 		pressingLeft = true;
-	}
-	else if(event.keyCode === 119) {// w
+	} else if(event.keyCode === 119) {// w
 		socket.emit('keyPress',{inputId:'up',state:true});
 		pressingDown = true;
 	} else if(event.keyCode === 109){  //m
 		gridMap();
 
-	}
-// console.log(event.keyCode);
+	} else if(event.keyCode === 114){  //r
+
+
+
+		socket.emit('resetThisGame',{date:Date.now(),state:true}, function(error, message){
+
+
+
+			console.log(' client reset callback');
+
+		    // console.log(error);
+    		// console.log(message);
+		});
+	}	
+
+	// console.log(event.keyCode);
 
 		
 }
 
+	socket.on('removeStageChild', function(data, callback){
+
+		for (var i = stage.children.length - 1; i >= 0; i--) {	
+			stage.removeChild(stage.children[i]);
+		};
+
+		
+			console.log('removeStageChild');
+
+	});
+
+
+socket.on('serverIsReset', function(){
+
+
+	map = false;
+	enemy = false;
+			console.log(' client reset serverIsReset');
+
+});
 
 document.onkeyup = function(event){
 
@@ -691,7 +732,7 @@ document.onkeyup = function(event){
 	if(event.keyCode === 68){	//d
 		socket.emit('keyPress',{inputId:'right',state:false});
 		pressingRight = false;
-		console.log('dddd');
+
 	}
 	else if(event.keyCode === 83){	//s
 		socket.emit('keyPress',{inputId:'down',state:false});

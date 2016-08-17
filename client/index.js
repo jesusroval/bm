@@ -398,15 +398,29 @@ var Bomb = function(initPack){
 	self.x = initPack.x;
 	self.y = initPack.y;
 
+
+
 	self.obj = new PIXI.Sprite.fromImage('/client/img/bomb.png');
 	self.obj.x = initPack.x;
 	self.obj.y = initPack.y;
 	stage.addChild(self.obj);
 
+	fuse.play();
+
+
+
 	Bomb.list[self.id] = self;		
 	return self;
 }
 Bomb.list = {};	
+
+var fuse = new Howl({
+  src: ['/client/sounds/fuse.mp3']
+});
+
+
+
+
 
 var Bullet = function(initPack){
 	var self = {};
@@ -589,6 +603,20 @@ socket.on('update',function(data){
 	}
 });
 
+var bomb = new Howl({
+  src: ['/client/sounds/bomb.mp3']
+});
+var chuckle = new Howl({
+  src: ['/client/sounds/chuckle.mp3']
+});
+var zombie = new Howl({
+  src: ['/client/sounds/zombie.mp3']
+});
+var dying = new Howl({
+  src: ['/client/sounds/zombie.mp3']
+});
+
+
 socket.on('remove',function(data){
 
 
@@ -602,6 +630,7 @@ socket.on('remove',function(data){
 	for (var i = 0; i < data.bomb.length; i++) {
 		var b = Bomb.list[data.bomb[i]];
 		if(b){
+			bomb.play();
 			stage.removeChild(b.obj);
 			delete Bomb.list[data.bomb[i]];
 		}
@@ -623,6 +652,7 @@ socket.on('remove',function(data){
 	for (var i = 0; i < data.powerUp.length; i++) {
 		var pU = PowerUp.list[data.powerUp[i]];
 		if(pU){
+			chuckle.play();
 			stage.removeChild(pU.obj);
 			delete PowerUp.list[data.powerUp[i]];
 		}
@@ -634,9 +664,9 @@ socket.on('remove',function(data){
 		var e = Enemy.list[data.enemy[i]];
 		
 		if (e) {
-
-		stage.removeChild(e.obj);
-		delete Enemy.list[data.enemy[i]];
+			zombie.play();
+			stage.removeChild(e.obj);
+			delete Enemy.list[data.enemy[i]];
 		}
 	}
 			

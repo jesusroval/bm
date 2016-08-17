@@ -1047,6 +1047,7 @@ var Bomb = function(param){
 			id:self.id,
 			x:self.x,
 			y:self.y,
+			fuse:self.fuse,
 		};
 	}
 

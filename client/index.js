@@ -6,7 +6,6 @@ var socket = io();
 var TILE_SIZE = 64;	
 
 
-
 var mX = 0;
 var mY = 0;
 var playChar;
@@ -35,8 +34,39 @@ var gridBtn = document.getElementById('gridBtn');
 var signDiv = document.getElementById('signDiv');
 // var signDivUsername = document.getElementById('signDiv-username');
 var signDivSignIn = document.getElementById('signDiv-signIn');
+var createGameBtn = document.getElementById('create');
+var joinGameBtn = document.getElementById('join');
+var startGameBtn = document.getElementById('start');
+var gameList = document.getElementById('gameList');
+var amountOfPlayers = 0;
+var playerText = [];
+var pt;
+var movie;
+var currentFrameNow = 0;
+
+
 // var signDivSignUp = document.getElementById('signDiv-signUp');
 // var signDivPassword = document.getElementById('signDiv-password');
+
+
+var bomb = new Howl({
+  src: ['/client/sounds/bomb.mp3']
+});
+var chuckle = new Howl({
+  src: ['/client/sounds/chuckle.mp3']
+});
+var zombie = new Howl({
+  src: ['/client/sounds/zombie.mp3']
+});
+var dying = new Howl({
+  src: ['/client/sounds/dying.mp3']
+});
+var fuse = new Howl({
+  src: ['/client/sounds/fuse.mp3']
+});
+
+
+
 
 // var array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 502, 502, 502, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 502, 502, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -113,34 +143,91 @@ var gridMapUpdate = function(){
 signDivSignIn.onclick = function(){
 	socket.emit('signIn');
 }
+
+
+
+startGameBtn.onclick = function(){
+
+	var gameId = gameList.options[gameList.selectedIndex].value;
+
+	socket.emit('startGame',{ gameId:gameId})
+
+}
+
+joinGameBtn.onclick = function(){
+
+	
+	// var strUser = gameList.options[gameList.selectedIndex].value;
+	
+
+	var gameId = gameList.options[gameList.selectedIndex].value;
+
+
+	socket.emit('joinGame', {playerName:'Bertil', gameId:gameId});
+}
+createGameBtn.onclick = function(){
+	
+	//take from textbox later name
+
+socket.emit('createGame', {gameName:'what ever (1/4)'});
+
+}
+socket.on('addgameToList', function(data){
+
+
+	
+
+    var option = document.createElement("option");
+    option.text = data.gameName;
+    option.value = data.id;
+    gameList.add(option, gameList[0]);
+
+
+	// gameList.appendChild('<option>text4</option>');
+
+});
+
+
+
+
+
+
+
+
+socket.on('startTheGame', function(data){
+		signDiv.style.display = 'none';
+		gameDiv.style.display = 'inline-block';
+		game();	
+});
+
 // signDivSignUp.onclick = function(){
 // 	socket.emit('signUp',{username:signDivUsername.value,password:signDivPassword.value});
 // }
-socket.on('signInResponse',function(data){
-	if(data.success){
-		signDiv.style.display = 'none';
-		gameDiv.style.display = 'inline-block';
-		game();
-	} else
-		alert("Sign in unsuccessul.");
-});
-socket.on('signUpResponse',function(data){
-	if(data.success){
-		alert("Sign up successul.");
-	} else
-		alert("Sign up unsuccessul.");
-});
+// socket.on('signInResponse',function(data){
+// 	if(data.success){
+// 		signDiv.style.display = 'none';
+// 		gameDiv.style.display = 'inline-block';
+// 		game();
+// 	} else
+// 		alert("Sign in unsuccessul.");
+// });
+// socket.on('signUpResponse',function(data){
+// 	if(data.success){
+// 		alert("Sign up successul.");
+// 	} else
+// 		alert("Sign up unsuccessul.");
+// });
 
 //chat
 var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 
-socket.on('addToChat',function(data){
-	chatText.innerHTML += '<div>' + data + '</div>';
-});
-	socket.on('evalAnswer',function(data){
-});
+// socket.on('addToChat',function(data){
+// 	chatText.innerHTML += '<div>' + data + '</div>';
+// });
+// 	socket.on('evalAnswer',function(data){
+// });
 
 
 // chatForm.onsubmit = function(e){
@@ -151,6 +238,43 @@ socket.on('addToChat',function(data){
 // 		socket.emit('sendMsgToServer',chatInput.value);
 // 	chatInput.value = '';		
 // }
+	PIXI.loader
+    .add('client/img/char.json')
+    .load(onAssetsLoaded);
+
+	// var loader = new PIXI.loaders.Loader('/client/img', 8);
+	// loader.add("/char.json");
+
+
+	// loader.load(onAssetsLoaded);
+
+	// animate();
+// -
+function onAssetsLoaded()
+{
+    // create an array of textures from an image path
+    // var frames = [];
+//32
+    for (var i = 0; i < 48; i++) {
+        var val = i < 10 ? '0' + i : i;
+
+        // magically works since the spritesheet was loaded with the pixi loader
+      var temptext = PIXI.Texture.fromFrame('playerOne00' + val + '.png')
+      playerText.push(temptext);
+      // pt = PIXI.Texture.fromFrame('playerOne0000.png');
+      // playerText.push(PIXI.Texture.fromFrame('playerOne0001.png'));
+
+    }
+
+       // movie = new PIXI.extras.MovieClip(playerText);
+       //  movie.animationSpeed = 0.11;
+
+       // movie.play();
+
+
+
+    // animate();
+}
 
 function game(){
 
@@ -161,14 +285,9 @@ function game(){
 	
 	stage = new PIXI.Container();
 
-	var assetsToLoader = ["/client/img/animals.json"];
+	// var assetsToLoader = ["/client/img/animals.json"];
 
-	var loader = new PIXI.loaders.Loader('/client/img', 7);
-
-	loader.load();
-
-	animate();
-// -
+    animate();
 	// var ctx = document.getElementById("ctx").getContext("2d");
 	// ctx.font = '30px Arial';
 function animate() {
@@ -247,6 +366,12 @@ var Player = function(initPack){
 
 	self.serverX = initPack.x;
 	self.serverY = initPack.y;
+
+	self.movingDown = initPack.movingDown;
+	self.movingUp = initPack.movingUp;
+	self.movingRight = initPack.movingRight;
+	self.movingLeft = initPack.movingLeft;	
+	self.animationSkip = false;
 	// self.nowX;
 	// self.nowY;
 
@@ -254,20 +379,46 @@ var Player = function(initPack){
 	// self.pressingLeft = false;
 	// self.pressingUp = false;
 	// self.pressingDown = false;
+	//33 34 35 36 
+	self.frames = [];
 
+	var cp = initPack.player;
+	cp *= 4;
+	cp += 32
+
+	// cp *= 8;
+	console.log(initPack.player + ' ip ' + initPack.spriteArrayOffset);
+	for (currentFrameNow; currentFrameNow < initPack.spriteArrayOffset; currentFrameNow++) {
+		self.frames.push(playerText[currentFrameNow]);
+	}
+
+
+	for (var i = 0; i < 4; i++) {
+
+		self.frames.push(playerText[cp]);
+		cp += 1;
+	}
 
 	if(selfId === null){selfId = self.id};
 
-// here
-	self.obj = new PIXI.Sprite.fromImage('/client/img/pirate.png');
-	// self.obj.scale.x = 2;
-	// self.obj.scale.y = 2;
+	movie = new PIXI.extras.MovieClip(self.frames);
+	movie.animationSpeed = 0.14;
+	movie.gotoAndStop(1);
+    // movie.play();
+
+
+	self.obj = movie;
+
+	// new PIXI.Sprite(playerText[1]);
+
+	self.obj.scale.x = 2;
+	self.obj.scale.y = 2;
 	self.obj.x = initPack.x - 32;
 	self.obj.y = initPack.y - 32;
 	stage.addChild(self.obj);
 
 
-
+	amountOfPlayers +=1;
 	// working but have instant death
 	// //Create the health bar
 	// self.healthBar = new PIXI.Container();
@@ -414,11 +565,6 @@ var Bomb = function(initPack){
 }
 Bomb.list = {};	
 
-var fuse = new Howl({
-  src: ['/client/sounds/fuse.mp3']
-});
-
-
 
 
 
@@ -520,12 +666,32 @@ socket.on('init',function(data){
 		}				
 	}
 
+
+
 	if(data.selfId)
 		selfId = data.selfId;
 	if(data.player){
+		var alreadyExist = false;
+
 		for(var i = 0 ; i < data.player.length; i++){
-			charArray.push(new Player(data.player[i]));
+			alreadyExist = false;
+
+			for (var j = 0; j < charArray.length; j++) {
+				if(charArray[j].id === data.player[i].id){
+					alreadyExist = true;
+				}
+			}
+
+			if(!alreadyExist){
+				console.log(data.player.length);
+				charArray.push(new Player(data.player[i]));
+			}
+
+
+
 		}
+
+		currentFrameNow = 0;
 
 	}
 
@@ -549,7 +715,6 @@ socket.on('update',function(data){
 				e.serverX = pack.x;
 				e.serverY = pack.y;
 			}
-
 		}
 	} else{
 			for (var i = 0; i < data.enemy.length; i++) {
@@ -598,23 +763,45 @@ socket.on('update',function(data){
 
 			if(pack.died !== undefined){
 				p.died = pack.died;
-			}	
+			}
 
+			if(!p.animationSkip){
+				if(pack.movingDown){
+					if(p.obj.currentFrame >= 1)
+						p.obj.gotoAndStop(0);
+					else if(p.obj.currentFrame === 0)
+						p.obj.gotoAndStop(1);			
+				} else if(pack.movingUp){
+					if(p.obj.currentFrame >= 7 || p.obj.currentFrame < 6)
+						p.obj.gotoAndStop(6);
+					else if(p.obj.currentFrame === 6)
+						p.obj.gotoAndStop(7);					
+				}else if(pack.movingLeft){
+					if(p.obj.currentFrame >= 3 || p.obj.currentFrame < 2)
+						p.obj.gotoAndStop(2);
+					else if(p.obj.currentFrame === 2)
+						p.obj.gotoAndStop(3);					
+				} else if(pack.movingRight){
+					if(p.obj.currentFrame >= 5 || p.obj.currentFrame < 4)
+						p.obj.gotoAndStop(4);
+					else if(p.obj.currentFrame === 4)
+						p.obj.gotoAndStop(5);					
+				} else if(pack.lastDirection === 'down'){
+					p.obj.gotoAndStop(8);
+				} else if(pack.lastDirection === 'left'){
+					p.obj.gotoAndStop(9);
+				} else if(pack.lastDirection === 'right'){
+					p.obj.gotoAndStop(10);
+				} else if(pack.lastDirection === 'up'){
+					p.obj.gotoAndStop(11);
+				}
+				p.animationSkip = true;
+			} else{
+				p.animationSkip = false;				
+			}
 	}
 });
 
-var bomb = new Howl({
-  src: ['/client/sounds/bomb.mp3']
-});
-var chuckle = new Howl({
-  src: ['/client/sounds/chuckle.mp3']
-});
-var zombie = new Howl({
-  src: ['/client/sounds/zombie.mp3']
-});
-var dying = new Howl({
-  src: ['/client/sounds/zombie.mp3']
-});
 
 
 socket.on('remove',function(data){
@@ -625,6 +812,7 @@ socket.on('remove',function(data){
 		var p = Player.list[data.player[i]];
 		stage.removeChild(p.obj);
 		delete Player.list[data.player[i]];
+
 
 	}
 	for (var i = 0; i < data.bomb.length; i++) {
@@ -681,8 +869,10 @@ var drawMap = function(){
 
 var drawScore = function(){
 	// ctx.fillStyle = 'black';
-	// ctx.fillText(Player.list[selfId].score,0,30);
-}
+	// ctx.fillText(Player.list[selfId].score,0,30)
+;}
+
+
 
 document.onkeypress = function(event){
 	if(event.keyCode === 100){	//d
@@ -691,13 +881,35 @@ document.onkeypress = function(event){
 	} else if(event.keyCode === 115){	//s
 		socket.emit('keyPress',{inputId:'down',state:true});
 		pressingDown = true;
+
+
+	// var player = Player.list[selfId];
+	// if(player.obj.currentFrame >= 1)
+	// 	player.obj.gotoAndStop(0);
+	// else if(player.obj.currentFrame === 0)
+	// 	player.obj.gotoAndStop()1;
+
+
+	// console.log(player.obj.currentFrame);
+
+
+		// var player = Player.list[selfId];
+		// player.obj.
+  //   // movie.play();
+  //   	player.moveDown.play();
+		// player.obj = player.moveDown;
+
+
+
+
+
 	} else if(event.keyCode === 97){
 	 //a
 		socket.emit('keyPress',{inputId:'left',state:true});
 		pressingLeft = true;
 	} else if(event.keyCode === 119) {// w
 		socket.emit('keyPress',{inputId:'up',state:true});
-		pressingDown = true;
+		pressingUp = true;
 	} else if(event.keyCode === 109){  //m
 		gridMap();
 
@@ -775,7 +987,7 @@ document.onkeyup = function(event){
 	}
 	else if(event.keyCode === 87) {// w
 		socket.emit('keyPress',{inputId:'up',state:false});
-		pressingDown = false;
+		pressingUp = false;
 	}
 
 

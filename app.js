@@ -58,6 +58,8 @@ var StartGame = function(theGame){
 	var playerNumber = 0;
 	var charArray = [];
 
+	var enemyMove = true;
+
 	var Map = function(param){
 
 		
@@ -421,7 +423,8 @@ var StartGame = function(theGame){
 
 
 			// //Move disable during dev !!!!!!
-			// enemy.move();
+			if(enemyMove === true)
+				enemy.move();
 
 
 
@@ -823,6 +826,15 @@ var StartGame = function(theGame){
 
 			// callback('rest', {asdf:'asd2 2 2', hej:'Hejhop'});
 
+		});
+
+		socket.on('enemyMove', function(data){
+			console.log()
+			if(enemyMove === false){
+				enemyMove = true;
+			} else{
+				enemyMove = false;
+			}
 		});
 
 		socket.on('keyPress',function(data){

@@ -894,7 +894,10 @@ document.onkeypress = function(event){
 		socket.emit('resetThisGame',{date:Date.now(),state:true}, function(error, message){
 			console.log(' client reset callback');
 		});
-	}		
+	} else if(event.keyCode === 112){
+		socket.emit('enemyMove',{help:' evil bats stop! '});
+	}
+
 }
 
 	socket.on('removeStageChild', function(data, callback){

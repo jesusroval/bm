@@ -487,6 +487,10 @@ var StartGame = function(theGame){
 		self.touchX = 1;
 		// self.touchY = 1;
 		self.TY = 1;
+
+		self.touchAnchorX = 1;
+		self.touchAnchorY = 1;
+
 		self.touch = false;
 		self.moveBomb = false;
 
@@ -553,19 +557,20 @@ var StartGame = function(theGame){
 				var gridTX = Math.floor(self.touchX / TILE_SIZE);
 				var gridTY =  Math.floor(self.TY / TILE_SIZE);
 
-				var gridXPlayer =  Math.floor(self.x / TILE_SIZE);
-				var gridYPlayer =  Math.floor(self.y / TILE_SIZE);
+				// var gridXPlayer =  Math.floor(self.x / TILE_SIZE);
+				// var gridYPlayer =  Math.floor(self.y / TILE_SIZE);
+				var gridXPlayer =  Math.floor(self.touchAnchorX / TILE_SIZE);
+				var gridYPlayer =  Math.floor(self.touchAnchorY / TILE_SIZE);
 
 
-
-				if(gridTX === gridXPlayer && gridTY === gridYPlayer && self.moveBomb === false){
-					self.dropBomb = true;
-					console.log('bombdrop');
-				} else{
+				// if(gridTX === gridXPlayer && gridTY === gridYPlayer && self.moveBomb === false){
+				// 	self.dropBomb = true;
+				// 	console.log('bombdrop');
+				// } else{
 				// console.log(self.touchX + ' ' + self.TY);
 
-					var xDiff = self.touchX - self.x;
-					var yDiff = self.TY - self.y;
+					var xDiff = self.touchX - self.touchAnchorX;
+					var yDiff = self.TY - self.touchAnchorY;
 
 					var tempXDiff = xDiff;
 					var tempYDiff = yDiff;			
@@ -609,7 +614,7 @@ var StartGame = function(theGame){
 							self.pressingLeft = false;
 						}
 					}					
-				}
+				// }
 
 	
 				self.touch = false;
@@ -933,14 +938,9 @@ var StartGame = function(theGame){
 		    data.touchX -= 13;
 		    data.touchY -= 9;
 
-			player.touchX = data.touchX;
-			player.TY = data.touchY;
+		    player.touchAnchorX = data.touchX;
+		    player.touchAnchorY = data.touchY;
 
-			player.moveBomb = data.move;
-
-			console.log('player y ' + player.TY + '  data y ' + data.touchY)
-
-			player.touch = true;
 
 		});
 		socket.on('touchend', function(data){
@@ -951,10 +951,22 @@ var StartGame = function(theGame){
 
 				player.touch = false;
 
+				player.dropBomb = data.dropBomb
+
 				console.log('touchend');
 		});
 		socket.on('touchmove', function(data){
+		    data.touchX -= 13;
+		    data.touchY -= 9;
 
+			player.touchX = data.touchX;
+			player.TY = data.touchY;
+
+			player.moveBomb = data.move;
+
+			// console.log('player y ' + player.TY + '  data y ' + data.touchY)
+
+			player.touch = true;
 		});
 
 

@@ -38,6 +38,7 @@ var createGameBtn = document.getElementById('create');
 var joinGameBtn = document.getElementById('join');
 var startGameBtn = document.getElementById('start');
 var gameList = document.getElementById('gameList');
+var lastTap = Date.now();
 
 
 
@@ -916,7 +917,17 @@ document.body.addEventListener('touchstart', function(e){
 
 document.body.addEventListener('touchend', function(e){
 
-	socket.emit('touchend',{h:'h'});
+
+	var now = Date.now();
+	var elapsed = now - lastTap;
+	lastTap = now;
+	var dropBomb = false;
+
+		if(elapsed < 200){
+			dropBomb = true;
+		} 
+
+	socket.emit('touchend',{dropBomb:dropBomb});
 
 }, false)
 
@@ -925,7 +936,7 @@ document.body.addEventListener('touchmove', function(e){
     var touchY = e.changedTouches[0].pageY;
 
 
-	socket.emit('touchstart',{touchX:touchX, touchY:touchY, move:true});
+	socket.emit('touchmove',{touchX:touchX, touchY:touchY, move:true});
 
 }, false)
 

@@ -74,7 +74,7 @@ var StartGame = function(theGame){
 					1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
 					1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,12,1,
 					1 ,0 ,1 ,10,1 ,0 ,1 ,10,1 ,2 ,1,
-					1 ,12,0 ,2 ,0 ,0 ,2 ,0 ,2 ,10,1,
+					1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,2 ,10,1,
 					1 ,11,1 ,2 ,1 ,0 ,1 ,2 ,1 ,2 ,1,
 					1 ,0 ,0 ,0 ,0 ,12,0 ,0 ,2 ,0 ,1,
 					1 ,0 ,1 ,0 ,1 ,2 ,1 ,2 ,1 ,0 ,1,
@@ -483,6 +483,12 @@ var StartGame = function(theGame){
 
 		self.speedDown = false;
 		self.movementTic = 8;
+
+		self.touchX = 1;
+		// self.touchY = 1;
+		self.TY = 1;
+		self.touch = false;
+
 		// self.
 
 		// self.animationSkip = false;
@@ -541,6 +547,72 @@ var StartGame = function(theGame){
 		
 		self.updateSpd = function(){
 
+
+			if(self.touch){
+				var gridTX = Math.floor(self.touchX / TILE_SIZE);
+				var gridTY =  Math.floor(self.TY / TILE_SIZE);
+
+				var gridXPlayer =  Math.floor(self.x / TILE_SIZE);
+				var gridYPlayer =  Math.floor(self.y / TILE_SIZE);
+
+
+
+				if(gridTX === gridXPlayer && gridTY === gridYPlayer){
+					self.dropBomb = true;
+					console.log('bombdrop');
+				} else{
+				// console.log(self.touchX + ' ' + self.TY);
+
+					var xDiff = self.touchX - self.x;
+					var yDiff = self.TY - self.y;
+
+					var tempXDiff = xDiff;
+					var tempYDiff = yDiff;			
+
+					if(xDiff < 0)
+						tempXDiff *= -1;
+
+					if(yDiff < 0)
+						tempYDiff *= -1;
+
+
+					if(tempXDiff > tempYDiff){
+						if(xDiff < 0){
+							self.pressingLeft = true;
+							self.pressingRight = false;
+							self.pressingDown = false;
+							self.pressingUp = false;					
+						}
+
+
+						else{
+							self.pressingRight = true;
+							self.pressingLeft = false;
+							self.pressingDown = false;
+							self.pressingUp = false;
+
+						}
+					} else if(tempXDiff < tempYDiff){
+						if(yDiff > 0){
+							self.pressingDown = true;
+							self.pressingRight = false;
+							self.pressingLeft = false;
+							self.pressingUp = false;
+
+						}
+						else{
+
+							self.pressingUp = true;
+							self.pressingRight = false;
+							self.pressingDown = false;
+							self.pressingLeft = false;
+						}
+					}					
+				}
+
+	
+				self.touch = false;
+			}
 			// if(!self.pressingRight && !self.pressingDown && !self.pressingUp && !self.pressingLeft){
 			// 	// console.log('aint moving dude');
 			// } else 
@@ -853,6 +925,30 @@ var StartGame = function(theGame){
 			else if(data.inputId === 'bomb')
 				player.dropBomb = data.state;
 
+		});
+		socket.on('touchstart',function(data){
+
+			//offset
+		    data.touchX -= 13;
+		    data.touchY -= 9;
+
+			player.touchX = data.touchX;
+			player.TY = data.touchY;
+
+			console.log('player y ' + player.TY + '  data y ' + data.touchY)
+
+			player.touch = true;
+
+		});
+		socket.on('touchend', function(data){
+				player.pressingDown = false;
+				player.pressingRight = false;
+				player.pressingLeft = false;
+				player.pressingUp = false;
+
+				player.touch = false;
+
+				console.log('touchend');
 		});
 
 	}

@@ -38,6 +38,51 @@ var createGameBtn = document.getElementById('create');
 var joinGameBtn = document.getElementById('join');
 var startGameBtn = document.getElementById('start');
 var gameList = document.getElementById('gameList');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// var currentMousePos = { x: -1, y: -1 };
+
+
+// 	document.addEventListener("touchstart", onTouchStart, true);  
+
+// 	document.addEventListener("touchend", onTouchEnd, true);  
+
+// 	document.addEventListener("touchmove", onTouchMove, true);
+	
+
+
+// 	function onTouchStart(event){  
+// 		currentMousePos.x = event.pageX;  
+// 		currentMousePos.y = event.pageY;
+// 	}
+
+// 	function onTouchMove(event){  
+// 		currentMousePos.x = event.pageX;
+// 		currentMousePos.y = event.pageY;
+// 	}
+
+// 	function onTouchEnd(event){  
+// 		currentMousePos.x = event.pageX;  
+// 		currentMousePos.y = event.pageY;
+// 		alert('x ' + event.pageX + '  y ' + event.pageY);
+// 	}
+
+
+
+
+
 var amountOfPlayers = 0;
 var playerText = [];
 var pt;
@@ -854,6 +899,26 @@ socket.on('remove',function(data){
 			
 });
 
+document.body.addEventListener('touchstart', function(e){
+    // alert pageX coordinate of touch point
+    var touchX = e.changedTouches[0].pageX;
+    var touchY = e.changedTouches[0].pageY;
+
+    console.log('touch y ' + touchY);
+
+	socket.emit('touchstart', {touchX:touchX, touchY:touchY});
+	// console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
+	// console.log('  x ' + touchX + '  y ' + touchY);
+
+
+}, false)
+
+
+document.body.addEventListener('touchend', function(e){
+
+	socket.emit('touchend',{h:'h'});
+
+}, false)
 document.onkeypress = function(event){
 	if(event.keyCode === 100){	//d
 		socket.emit('keyPress',{inputId:'right',state:true});

@@ -488,6 +488,7 @@ var StartGame = function(theGame){
 		// self.touchY = 1;
 		self.TY = 1;
 		self.touch = false;
+		self.moveBomb = false;
 
 		// self.
 
@@ -557,7 +558,7 @@ var StartGame = function(theGame){
 
 
 
-				if(gridTX === gridXPlayer && gridTY === gridYPlayer){
+				if(gridTX === gridXPlayer && gridTY === gridYPlayer && self.moveBomb === false){
 					self.dropBomb = true;
 					console.log('bombdrop');
 				} else{
@@ -935,6 +936,8 @@ var StartGame = function(theGame){
 			player.touchX = data.touchX;
 			player.TY = data.touchY;
 
+			player.moveBomb = data.move;
+
 			console.log('player y ' + player.TY + '  data y ' + data.touchY)
 
 			player.touch = true;
@@ -950,6 +953,10 @@ var StartGame = function(theGame){
 
 				console.log('touchend');
 		});
+		socket.on('touchmove', function(data){
+
+		});
+
 
 	}
 

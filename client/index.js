@@ -906,7 +906,7 @@ document.body.addEventListener('touchstart', function(e){
 
     console.log('touch y ' + touchY);
 
-	socket.emit('touchstart', {touchX:touchX, touchY:touchY});
+	socket.emit('touchstart', {touchX:touchX, touchY:touchY, move:false});
 	// console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
 	// console.log('  x ' + touchX + '  y ' + touchY);
 
@@ -919,6 +919,19 @@ document.body.addEventListener('touchend', function(e){
 	socket.emit('touchend',{h:'h'});
 
 }, false)
+
+document.body.addEventListener('touchmove', function(e){
+    var touchX = e.changedTouches[0].pageX;
+    var touchY = e.changedTouches[0].pageY;
+
+
+	socket.emit('touchstart',{touchX:touchX, touchY:touchY, move:true});
+
+}, false)
+
+
+
+
 document.onkeypress = function(event){
 	if(event.keyCode === 100){	//d
 		socket.emit('keyPress',{inputId:'right',state:true});

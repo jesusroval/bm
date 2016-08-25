@@ -806,14 +806,10 @@ socket.on('update',function(data){
 
 socket.on('remove',function(data){
 
-
-
 	for(var i = 0 ; i < data.player.length; i++){
 		var p = Player.list[data.player[i]];
 		stage.removeChild(p.obj);
 		delete Player.list[data.player[i]];
-
-
 	}
 	for (var i = 0; i < data.bomb.length; i++) {
 		var b = Bomb.list[data.bomb[i]];
@@ -822,7 +818,6 @@ socket.on('remove',function(data){
 			stage.removeChild(b.obj);
 			delete Bomb.list[data.bomb[i]];
 		}
-
 	}
 	for (var i = 0; i < data.explotion.length; i++) {
 		var e = Explotion.list[data.explotion[i]];
@@ -844,7 +839,6 @@ socket.on('remove',function(data){
 			stage.removeChild(pU.obj);
 			delete PowerUp.list[data.powerUp[i]];
 		}
-
 	}
 
 
@@ -859,20 +853,6 @@ socket.on('remove',function(data){
 	}
 			
 });
-
-var drawMap = function(){
-	// var player = Player.list[selfId];
-	// var x = WIDTH/2 - player.x;
-	// var y = HEIGHT/2 - player.y;
-	// ctx.drawImage(Img.map['field'],0,0);
-}
-
-var drawScore = function(){
-	// ctx.fillStyle = 'black';
-	// ctx.fillText(Player.list[selfId].score,0,30)
-;}
-
-
 
 document.onkeypress = function(event){
 	if(event.keyCode === 100){	//d
@@ -899,10 +879,6 @@ document.onkeypress = function(event){
   //   	player.moveDown.play();
 		// player.obj = player.moveDown;
 
-
-
-
-
 	} else if(event.keyCode === 97){
 	 //a
 		socket.emit('keyPress',{inputId:'left',state:true});
@@ -915,62 +891,29 @@ document.onkeypress = function(event){
 
 	} else if(event.keyCode === 114){  //r
 
-
-
 		socket.emit('resetThisGame',{date:Date.now(),state:true}, function(error, message){
-
-
-
 			console.log(' client reset callback');
-
-		    // console.log(error);
-    		// console.log(message);
 		});
-	}	
-
-	// console.log(event.keyCode);
-
-		
+	}		
 }
 
 	socket.on('removeStageChild', function(data, callback){
 
 		for (var i = stage.children.length - 1; i >= 0; i--) {	
 			stage.removeChild(stage.children[i]);
-		};
-
-		
+		};		
 			console.log('removeStageChild');
-
 	});
 
-
 socket.on('serverIsReset', function(){
-
 
 	map = false;
 	enemy = false;
 			console.log(' client reset serverIsReset');
-
 });
 
 document.onkeyup = function(event){
 
-	// if(event.keyCode === 68){	//d
-	// 	pressingRight = false;
-	// }
-	// else if(event.keyCode === 83){	//s
-	// 	pressingDown = false;
-	// }
-	// else if(event.keyCode === 65){
-	//  //a
-	// 	pressingLeft = false;
-	// }
-	// else if(event.keyCode === 87) {// w
-	// 	pressingDown = false;
-	// }
-
-// console.log(' up ' + event.keyCode);
 	if(event.keyCode === 68){	//d
 		socket.emit('keyPress',{inputId:'right',state:false});
 		pressingRight = false;
@@ -1010,19 +953,14 @@ document.onmousemove = function(event){
 
 }
 
-mousePos = function(eX, eY){
-	if (Player.list[selfId].obj.x && Player.list[selfId].obj.y) {
-		var x = -Player.list[selfId].obj.x + eX -8;
-		var y = -Player.list[selfId].obj.y + eY -8;
+	mousePos = function(eX, eY){
+		if (Player.list[selfId].obj.x && Player.list[selfId].obj.y) {
+			var x = -Player.list[selfId].obj.x + eX -8;
+			var y = -Player.list[selfId].obj.y + eY -8;
 
-		var angle = Math.atan2(y,x) / Math.PI * 180;
+			var angle = Math.atan2(y,x) / Math.PI * 180;
 
-		socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
+			socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
+		}
 	}
-
-
-
-}
-	
-
 }

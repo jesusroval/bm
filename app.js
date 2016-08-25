@@ -72,7 +72,7 @@ var StartGame = function(theGame){
 					1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1,
 					1 ,0 ,0 ,0 ,2 ,0 ,0 ,0 ,2 ,12,1,
 					1 ,0 ,1 ,10,1 ,0 ,1 ,10,1 ,2 ,1,
-					1 ,0 ,0 ,2 ,0 ,0 ,2 ,0 ,2 ,10,1,
+					1 ,12,0 ,2 ,0 ,0 ,2 ,0 ,2 ,10,1,
 					1 ,11,1 ,2 ,1 ,0 ,1 ,2 ,1 ,2 ,1,
 					1 ,0 ,0 ,0 ,0 ,12,0 ,0 ,2 ,0 ,1,
 					1 ,0 ,1 ,0 ,1 ,2 ,1 ,2 ,1 ,0 ,1,
@@ -418,7 +418,15 @@ var StartGame = function(theGame){
 			var enemy = Enemy.list[i];
 
 			// console.log(' move ' + enemy.id);
-			enemy.move();
+
+
+			// //Move disable during dev !!!!!!
+			// enemy.move();
+
+
+
+
+
 			// bomb.update();
 			// if(explotion.toRemove){
 			// 	delete Enemy.list[i];
@@ -469,6 +477,10 @@ var StartGame = function(theGame){
 		self.movingUp = false;
 		self.movingRight = false;
 		self.movingLeft = false;
+
+		self.speedDown = false;
+		self.movementTic = 8;
+		// self.
 
 		// self.animationSkip = false;
 
@@ -530,13 +542,13 @@ var StartGame = function(theGame){
 			// 	// console.log('aint moving dude');
 			// } else 
 
-
+				//[true, false]
 			if(self.movingDown){
 				self.y += self.maxSpd;
 
 				self.movingTurn += 1;
 
-				if(self.movingTurn >= 8){
+				if(self.movingTurn >= self.movementTic){
 					self.movingTurn = 0;
 					self.movingDown = false;
 					self.lastDirection = 'down';
@@ -547,11 +559,10 @@ var StartGame = function(theGame){
 
 				self.movingTurn += 1;
 
-				if(self.movingTurn >= 8){
+				if(self.movingTurn >= self.movementTic){
 					self.movingTurn = 0;
 					self.movingRight = false;
 					self.lastDirection = 'right';
-
 				}
 
 
@@ -560,11 +571,10 @@ var StartGame = function(theGame){
 
 				self.movingTurn += 1;
 
-				if(self.movingTurn >= 8){
+				if(self.movingTurn >= self.movementTic){
 					self.movingTurn = 0;
 					self.movingLeft = false;
 					self.lastDirection = 'left';
-
 				}
 
 
@@ -573,11 +583,10 @@ var StartGame = function(theGame){
 
 				self.movingTurn += 1;
 
-				if(self.movingTurn >= 8){
+				if(self.movingTurn >= self.movementTic){
 					self.movingTurn = 0;
 					self.movingUp = false;
 					self.lastDirection = 'up';
-
 				}
 
 
@@ -590,6 +599,19 @@ var StartGame = function(theGame){
 		}
 
 		function moveFunc(){
+
+
+				
+
+				// console.log('before, self  ' + self.speedDown + '   ' + speedDownTemp);
+				if(self.speedDown === true){
+
+					self.maxSpd = 8;
+					self.movementTic = 8;
+					self.speedDown = false;
+					// console.log(self.maxSpd + ' speed after');
+				}
+
 				if(self.x > 0 && self.y > 0){
 					// hitTestRectangle(r1, r2)
 
@@ -612,15 +634,20 @@ var StartGame = function(theGame){
 						}
 					}
 
-						var pressRightCord1 = {x:self.x + self.maxSpd + self.width, y:self.y - self.height};
-						var pressRightCord2 = {x:self.x + self.maxSpd + self.width, y:self.y + self.height};
+						// var pressRightCord1 = {x:self.x + self.maxSpd + self.width, y:self.y - self.height};
+						// var pressRightCord2 = {x:self.x + self.maxSpd + self.width, y:self.y + self.height};
 
-						var pressRight1 = isPositionWall(pressRightCord1, theGame.id);
-						var pressRight2 = isPositionWall(pressRightCord2, theGame.id);
+						var pressRight1 = isPositionWall({x:self.x + self.maxSpd + self.width, y:self.y - self.height}, theGame.id);
+						var pressRight2 = isPositionWall({x:self.x + self.maxSpd + self.width, y:self.y + self.height}, theGame.id);
 
 						var pressLeft1 = isPositionWall({x:self.x - self.maxSpd - self.width, y:self.y + self.height}, theGame.id);
 						var pressLeft2 = isPositionWall({x:self.x - self.maxSpd - self.width, y:self.y - self.height}, theGame.id);
 
+						var pressUp1 = isPositionWall({x:self.x + self.width, y:self.y - self.maxSpd - self.height}, theGame.id);
+						var pressUp2 = isPositionWall({x:self.x - self.width, y:self.y - self.maxSpd - self.height}, theGame.id);
+
+						var pressDown1 = isPositionWall({x:self.x - self.width, y:self.y + self.maxSpd + self.height}, theGame.id);
+						var pressDown2 = isPositionWall({x:self.x + self.width, y:self.y + self.maxSpd + self.height}, theGame.id);
 
 					if(self.pressingRight){
 
@@ -640,16 +667,7 @@ var StartGame = function(theGame){
 						else if(pressLeft1 === self.id && pressLeft2 === self.id)
 							// self.x -= self.maxSpd;
 							self.movingLeft = true;
-					}
-
-						var pressUp1 = isPositionWall({x:self.x + self.width, y:self.y - self.maxSpd - self.height}, theGame.id);
-						var pressUp2 = isPositionWall({x:self.x - self.width, y:self.y - self.maxSpd - self.height}, theGame.id);
-
-						var pressDown1 = isPositionWall({x:self.x - self.width, y:self.y + self.maxSpd + self.height}, theGame.id);
-						var pressDown2 = isPositionWall({x:self.x + self.width, y:self.y + self.maxSpd + self.height}, theGame.id);
-					 
-
-					if(self.pressingUp){
+					} else if(self.pressingUp){
 
 						if(pressUp1	=== 0 && pressUp2 ===0)
 						// self.y -= self.maxSpd;
@@ -764,10 +782,13 @@ var StartGame = function(theGame){
 	///////
 
 	function speedUp(player){
-		player.maxSpd *= 2;
+		// player.maxSpd *= 2;
+		player.movementTic = 4;
+		player.maxSpd = 16
 
 		setTimeout(function(){
-			player.maxSpd /= 2;
+			player.speedDown = true;
+			// player.maxSpd /= 2;
 		}, 5000)
 	}
 	Player.list = {};

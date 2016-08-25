@@ -38,16 +38,55 @@ var createGameBtn = document.getElementById('create');
 var joinGameBtn = document.getElementById('join');
 var startGameBtn = document.getElementById('start');
 var gameList = document.getElementById('gameList');
+var lastPan;
 var lastTap = Date.now();
+var tEnd = true;
+// var myElement = document.getElementById('hitarea');
+var myElement = document.getElementById('allPage');
+
+// We create a manager object, which is the same as Hammer(), but without the presetted recognizers. 
+var mc = new Hammer.Manager(document);
+
+
+// Tap recognizer with minimal 2 taps
+mc.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
+// Single tap recognizer
+// mc.add( new Hammer.Tap({ event: 'singletap' }) );
+
+mc.add( new Hammer.Pan({ direction: Hammer.DIRECTION_ALL, threshold: 0 }) );
+
+
+mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+
+// we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+// mc.get('doubletap').recognizeWith('singletap');
+// we only want to trigger a tap, when we don't have detected a doubletap
+// mc.get('singletap').requireFailure('doubletap');
 
 
 
+// var hammertime = new Hammer(document);
+
+// // Tap recognizer with minimal 2 taps
+// hammertime.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
+// // Single tap recognizer
+// hammertime.add( new Hammer.Tap({ event: 'singletap' }) );
+
+// // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+// hammertime.get('doubletap').recognizeWith('singletap');
+// // we only want to trigger a tap, when we don't have detected a doubletap
+// hammertime.get('singletap').requireFailure('doubletap');
+
+
+// // hammertime.on('pan', function(ev) {
+// // 	console.log(ev.additionalEvent);
+// // });
 
 
 
-
-
-
+// hammertime.on("singletap doubletap", function(ev) {
+//     myElement.textContent += ev.type +" ";
+// });
 
 
 
@@ -900,47 +939,70 @@ socket.on('remove',function(data){
 			
 });
 
-document.body.addEventListener('touchstart', function(e){
-    // alert pageX coordinate of touch point
-    var touchX = e.changedTouches[0].pageX;
-    var touchY = e.changedTouches[0].pageY;
+// document.body.addEventListener('touchstart', function(e){
+//     // alert pageX coordinate of touch point
+//     var touchX = e.changedTouches[0].pageX;
+//     var touchY = e.changedTouches[0].pageY;
 
-    console.log('touch y ' + touchY);
+//     console.log('touch y ' + touchY);
 
-	socket.emit('touchstart', {touchX:touchX, touchY:touchY, move:false});
-	// console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
-	// console.log('  x ' + touchX + '  y ' + touchY);
+// 	socket.emit('touchstart', {touchX:touchX, touchY:touchY, move:false});
+// 	// console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
+// 	// console.log('  x ' + touchX + '  y ' + touchY);
 
 
-}, false)
+// }, false)
 
 
 document.body.addEventListener('touchend', function(e){
 
 
-	var now = Date.now();
-	var elapsed = now - lastTap;
-	lastTap = now;
-	var dropBomb = false;
+	// var now = Date.now();
+	// var elapsed = now - lastTap;
+	// lastTap = now;
+	// var dropBomb = false;
 
-		if(elapsed < 200){
-			dropBomb = true;
-		} 
+	// 	if(elapsed < 200){
+	// 		dropBomb = true;
+	// 	} 
 
-	socket.emit('touchend',{dropBomb:dropBomb});
-
+	socket.emit('touchend',{dropBomb:'dropBomb'});
+	// lastPan = '';
+	tEnd = true;
 }, false)
 
-document.body.addEventListener('touchmove', function(e){
-    var touchX = e.changedTouches[0].pageX;
-    var touchY = e.changedTouches[0].pageY;
+// document.body.addEventListener('touchmove', function(e){
+//     var touchX = e.changedTouches[0].pageX;
+//     var touchY = e.changedTouches[0].pageY;
 
 
-	socket.emit('touchmove',{touchX:touchX, touchY:touchY, move:true});
+// 	socket.emit('touchmove',{touchX:touchX, touchY:touchY, move:true});
 
-}, false)
+// }, false)
 
+// hammertime.on("doubletap", onDoubleTap);
 
+// function onDoubleTap(ev) {
+// 	console.log("double tap");
+// }
+
+mc.on("doubletap", function(ev) {
+    console.log(ev.type + " ");
+    socket.emit('doubletap', {type:ev.type});
+
+});
+
+mc.on('pan', function(ev) {
+
+	if(ev.additionalEvent && !tEnd){
+		lastPan = ev.additionalEvent;
+
+		console.log(ev.additionalEvent);
+		socket.emit('pan', {additionalEvent:ev.additionalEvent});
+	}
+
+	tEnd = false;
+});
 
 
 document.onkeypress = function(event){

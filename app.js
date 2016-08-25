@@ -553,72 +553,72 @@ var StartGame = function(theGame){
 		self.updateSpd = function(){
 
 
-			if(self.touch){
-				var gridTX = Math.floor(self.touchX / TILE_SIZE);
-				var gridTY =  Math.floor(self.TY / TILE_SIZE);
+			// if(self.touch){
+			// 	var gridTX = Math.floor(self.touchX / TILE_SIZE);
+			// 	var gridTY =  Math.floor(self.TY / TILE_SIZE);
 
-				// var gridXPlayer =  Math.floor(self.x / TILE_SIZE);
-				// var gridYPlayer =  Math.floor(self.y / TILE_SIZE);
-				var gridXPlayer =  Math.floor(self.touchAnchorX / TILE_SIZE);
-				var gridYPlayer =  Math.floor(self.touchAnchorY / TILE_SIZE);
-
-
-				// if(gridTX === gridXPlayer && gridTY === gridYPlayer && self.moveBomb === false){
-				// 	self.dropBomb = true;
-				// 	console.log('bombdrop');
-				// } else{
-				// console.log(self.touchX + ' ' + self.TY);
-
-					var xDiff = self.touchX - self.touchAnchorX;
-					var yDiff = self.TY - self.touchAnchorY;
-
-					var tempXDiff = xDiff;
-					var tempYDiff = yDiff;			
-
-					if(xDiff < 0)
-						tempXDiff *= -1;
-
-					if(yDiff < 0)
-						tempYDiff *= -1;
+			// 	// var gridXPlayer =  Math.floor(self.x / TILE_SIZE);
+			// 	// var gridYPlayer =  Math.floor(self.y / TILE_SIZE);
+			// 	var gridXPlayer =  Math.floor(self.touchAnchorX / TILE_SIZE);
+			// 	var gridYPlayer =  Math.floor(self.touchAnchorY / TILE_SIZE);
 
 
-					if(tempXDiff > tempYDiff){
-						if(xDiff < 0){
-							self.pressingLeft = true;
-							self.pressingRight = false;
-							self.pressingDown = false;
-							self.pressingUp = false;					
-						}
+			// 	// if(gridTX === gridXPlayer && gridTY === gridYPlayer && self.moveBomb === false){
+			// 	// 	self.dropBomb = true;
+			// 	// 	console.log('bombdrop');
+			// 	// } else{
+			// 	// console.log(self.touchX + ' ' + self.TY);
+
+			// 		var xDiff = self.touchX - self.touchAnchorX;
+			// 		var yDiff = self.TY - self.touchAnchorY;
+
+			// 		var tempXDiff = xDiff;
+			// 		var tempYDiff = yDiff;			
+
+			// 		if(xDiff < 0)
+			// 			tempXDiff *= -1;
+
+			// 		if(yDiff < 0)
+			// 			tempYDiff *= -1;
 
 
-						else{
-							self.pressingRight = true;
-							self.pressingLeft = false;
-							self.pressingDown = false;
-							self.pressingUp = false;
+			// 		if(tempXDiff > tempYDiff){
+			// 			if(xDiff < 0){
+			// 				self.pressingLeft = true;
+			// 				self.pressingRight = false;
+			// 				self.pressingDown = false;
+			// 				self.pressingUp = false;					
+			// 			}
 
-						}
-					} else if(tempXDiff < tempYDiff){
-						if(yDiff > 0){
-							self.pressingDown = true;
-							self.pressingRight = false;
-							self.pressingLeft = false;
-							self.pressingUp = false;
 
-						}
-						else{
+			// 			else{
+			// 				self.pressingRight = true;
+			// 				self.pressingLeft = false;
+			// 				self.pressingDown = false;
+			// 				self.pressingUp = false;
 
-							self.pressingUp = true;
-							self.pressingRight = false;
-							self.pressingDown = false;
-							self.pressingLeft = false;
-						}
-					}					
-				// }
+			// 			}
+			// 		} else if(tempXDiff < tempYDiff){
+			// 			if(yDiff > 0){
+			// 				self.pressingDown = true;
+			// 				self.pressingRight = false;
+			// 				self.pressingLeft = false;
+			// 				self.pressingUp = false;
+
+			// 			}
+			// 			else{
+
+			// 				self.pressingUp = true;
+			// 				self.pressingRight = false;
+			// 				self.pressingDown = false;
+			// 				self.pressingLeft = false;
+			// 			}
+			// 		}					
+			// 	// }
 
 	
-				self.touch = false;
-			}
+			// 	self.touch = false;
+			// }
 			// if(!self.pressingRight && !self.pressingDown && !self.pressingUp && !self.pressingLeft){
 			// 	// console.log('aint moving dude');
 			// } else 
@@ -932,6 +932,35 @@ var StartGame = function(theGame){
 				player.dropBomb = data.state;
 
 		});
+		socket.on('pan', function(data){
+			if(data.additionalEvent === 'panleft'){
+				player.pressingLeft = true;
+				player.pressingRight = false;
+				player.pressingDown = false;
+				player.pressingUp = false;				
+			} else if(data.additionalEvent === 'pandown'){
+				player.pressingDown = true;
+				player.pressingRight = false;
+				player.pressingLeft = false;
+				player.pressingUp = false;	
+			} else if(data.additionalEvent === 'panup'){
+				player.pressingUp = true;
+				player.pressingRight = false;
+				player.pressingDown = false;
+				player.pressingLeft = false;	
+			} else if(data.additionalEvent === 'panright'){
+				player.pressingRight = true;
+				player.pressingLeft = false;
+				player.pressingDown = false;
+				player.pressingUp = false;	
+			}
+		});
+
+		socket.on('doubletap', function(data){
+			player.dropBomb = true;
+		});
+
+
 		socket.on('touchstart',function(data){
 
 			//offset
@@ -951,7 +980,7 @@ var StartGame = function(theGame){
 
 				player.touch = false;
 
-				player.dropBomb = data.dropBomb
+				// player.dropBomb = data.dropBomb
 
 				console.log('touchend');
 		});

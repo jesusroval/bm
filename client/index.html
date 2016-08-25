@@ -1,33 +1,40 @@
-<div id="signDiv">
-	<select id="gameList" name="sometext" size="5">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
-	</select>
-	<br/>
-	<br/>
-	<button id="create">Create Game</button>
-	<button id="join">Join Game</button>
-	<button id="start">Start Game</button>
 
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<button id="signDiv-signIn">PLAY NOW!</button>
+<div id='allPage'>
+
+	<div id="signDiv">
+		<select id="gameList" name="sometext" size="5">
+
+		</select>
+		<br/>
+		<br/>
+		<button id="create">Create Game</button>
+		<button id="join">Join Game</button>
+		<button id="start">Start Game</button>
+
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<button id="signDiv-signIn">PLAY NOW!</button>
+	</div>
+
+	<div id="gameDiv" style="display:none;">
+
+	</div>
+
+	<script src="/client/socket.js"></script>
+	<script src="/client/pixi.min.js"></script>
+	<script src="/client/howler.js"></script>
+	<script src="/client/hammer.min.js"></script>
+	<script src="/client/index.js"></script>
 </div>
-
-<div id="gameDiv" style="display:none;">
-
-</div>
-
-<script src="/client/socket.js"></script>
-<script src="/client/pixi.min-dev.js"></script>
-<script src="/client/howler.js"></script>
-<script src="/client/index.js"></script>

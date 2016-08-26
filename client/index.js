@@ -957,14 +957,16 @@ socket.on('remove',function(data){
 document.body.addEventListener('touchend', function(e){
 
 
-	// var now = Date.now();
-	// var elapsed = now - lastTap;
-	// lastTap = now;
-	// var dropBomb = false;
+	var now = Date.now();
+	var elapsed = now - lastTap;
+	lastTap = now;
+	var dropBomb = false;
 
-	// 	if(elapsed < 200){
-	// 		dropBomb = true;
-	// 	} 
+		if(elapsed < 200){
+			// dropBomb = true;
+			socket.emit('doubletap', {type:ev.type});
+
+		} 
 
 	socket.emit('touchend',{dropBomb:'dropBomb'});
 	// lastPan = '';
@@ -986,11 +988,11 @@ document.body.addEventListener('touchend', function(e){
 // 	console.log("double tap");
 // }
 
-mc.on("doubletap", function(ev) {
-    console.log(ev.type + " ");
-    socket.emit('doubletap', {type:ev.type});
+// mc.on("doubletap", function(ev) {
+//     console.log(ev.type + " ");
+//     socket.emit('doubletap', {type:ev.type});
 
-});
+// });
 
 mc.on('pan', function(ev) {
 

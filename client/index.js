@@ -943,7 +943,7 @@ socket.on('remove',function(data){
 document.body.addEventListener('touchstart', function(e){
 
 		tEnd = false;
-	lastTap = Date.now();
+	// lastTap = Date.now();
 
     // alert pageX coordinate of touch point
  //    var touchX = e.changedTouches[0].pageX;
@@ -965,9 +965,9 @@ document.body.addEventListener('touchend', function(e){
 	var now = Date.now();
 	var elapsed = now - lastTap;
 	var dropBomb = false;
-//	lastTap = now;
+	lastTap = now;
 
-		if(elapsed < 84){
+		if(elapsed < 300){
 			dropBomb = true;
 			// socket.emit('doubletap', {type:'ev'});
 
@@ -1002,6 +1002,7 @@ document.body.addEventListener('touchend', function(e){
 mc.on('pan', function(ev) {
 
 		if(ev.additionalEvent && ev.distance > 20 && !tEnd){
+			lastTap -= 300;
 			lastPan = ev.additionalEvent;
 
 			console.log(ev.additionalEvent);

@@ -362,6 +362,7 @@ function onAssetsLoaded()
 }
 
 function game(){
+	window.scrollTo(0,1);
 
 	var renderer = new PIXI.WebGLRenderer(1088, 704);
 	// var renderer = new PIXI.WebGLRenderer(768, 768);
@@ -939,19 +940,23 @@ socket.on('remove',function(data){
 			
 });
 
-// document.body.addEventListener('touchstart', function(e){
-//     // alert pageX coordinate of touch point
-//     var touchX = e.changedTouches[0].pageX;
-//     var touchY = e.changedTouches[0].pageY;
+document.body.addEventListener('touchstart', function(e){
 
-//     console.log('touch y ' + touchY);
+		tEnd = false;
+	lastTap = Date.now();
 
-// 	socket.emit('touchstart', {touchX:touchX, touchY:touchY, move:false});
-// 	// console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
-// 	// console.log('  x ' + touchX + '  y ' + touchY);
+    // alert pageX coordinate of touch point
+ //    var touchX = e.changedTouches[0].pageX;
+ //    var touchY = e.changedTouches[0].pageY;
+
+ //    console.log('touch y ' + touchY);
+
+	// socket.emit('touchstart', {touchX:touchX, touchY:touchY, move:false});
+	// // console.log(' grid x ' + gridTX + ' grid y ' + gridTY);
+	// // console.log('  x ' + touchX + '  y ' + touchY);
 
 
-// }, false)
+}, false)
 
 
 document.body.addEventListener('touchend', function(e){
@@ -959,12 +964,12 @@ document.body.addEventListener('touchend', function(e){
 
 	var now = Date.now();
 	var elapsed = now - lastTap;
-	lastTap = now;
 	var dropBomb = false;
+//	lastTap = now;
 
-		if(elapsed < 300){
+		if(elapsed < 84){
 			dropBomb = true;
-			// socket.emit('doubletap', {type:ev.type});
+			// socket.emit('doubletap', {type:'ev'});
 
 		} 
 
@@ -996,14 +1001,19 @@ document.body.addEventListener('touchend', function(e){
 
 mc.on('pan', function(ev) {
 
-	if(ev.additionalEvent && !tEnd){
-		lastPan = ev.additionalEvent;
+		if(ev.additionalEvent && ev.distance > 20){
+			lastPan = ev.additionalEvent;
 
-		console.log(ev.additionalEvent);
-		socket.emit('pan', {additionalEvent:ev.additionalEvent});
-	}
+			console.log(ev.additionalEvent);
+			socket.emit('pan', {additionalEvent:ev.additionalEvent});
+		} 
 
-	tEnd = false;
+		// else if(ev.distance < 20 && tEnd === true){
+		// 	socket.emit('doubletap', {type:ev.distance});
+		// }
+
+		tEnd = false;
+
 });
 
 

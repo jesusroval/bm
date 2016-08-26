@@ -1427,7 +1427,7 @@ var StartGame = function(theGame){
 		self.parentId = param.parent.id;
 
 		self.toRemove;
-		self.fuse = 2000;
+		self.fuse = 3000;
 		self.explode = false;
 		self.explodeLength = param.explodeLength;
 		self.parent = param.parent;

@@ -1001,7 +1001,7 @@ document.body.addEventListener('touchend', function(e){
 
 mc.on('pan', function(ev) {
 
-		if(ev.additionalEvent && ev.distance > 20){
+		if(ev.additionalEvent && ev.distance > 20 && !tEnd){
 			lastPan = ev.additionalEvent;
 
 			console.log(ev.additionalEvent);

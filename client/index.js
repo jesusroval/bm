@@ -962,13 +962,13 @@ document.body.addEventListener('touchend', function(e){
 	lastTap = now;
 	var dropBomb = false;
 
-		if(elapsed < 200){
-			// dropBomb = true;
-			socket.emit('doubletap', {type:ev.type});
+		if(elapsed < 300){
+			dropBomb = true;
+			// socket.emit('doubletap', {type:ev.type});
 
 		} 
 
-	socket.emit('touchend',{dropBomb:'dropBomb'});
+	socket.emit('touchend',{dropBomb:dropBomb});
 	// lastPan = '';
 	tEnd = true;
 }, false)

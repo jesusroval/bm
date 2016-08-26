@@ -958,6 +958,7 @@ var StartGame = function(theGame){
 
 		socket.on('doubletap', function(data){
 			player.dropBomb = true;
+			// console.log('doubletap');
 		});
 
 
@@ -980,7 +981,8 @@ var StartGame = function(theGame){
 
 				player.touch = false;
 
-				// player.dropBomb = data.dropBomb
+				player.dropBomb = data.dropBomb
+				
 
 				console.log('touchend');
 		});

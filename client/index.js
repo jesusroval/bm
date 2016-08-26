@@ -363,7 +363,7 @@ function onAssetsLoaded()
 
 function game(){
 
-	var renderer = new PIXI.WebGLRenderer(960, 704);
+	var renderer = new PIXI.WebGLRenderer(1088, 704);
 	// var renderer = new PIXI.WebGLRenderer(768, 768);
 	
 	document.body.appendChild(renderer.view);

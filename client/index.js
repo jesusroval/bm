@@ -214,7 +214,7 @@ var gridMap = function(){
 var gridMapUpdate = function(){
 	var gridMap = document.getElementById('gridMap').rows;
 	var y;
-	for (var i = 0; i < 11; i++) {	
+	for (var i = 0; i < 15; i++) {	
 		for (var j = 0; j < 11; j++) {
 			y = gridMap[i].cells;
 			y[j].innerHTML = array2D[i][j];
@@ -363,7 +363,7 @@ function onAssetsLoaded()
 
 function game(){
 
-	var renderer = new PIXI.WebGLRenderer(704, 704);
+	var renderer = new PIXI.WebGLRenderer(960, 704);
 	// var renderer = new PIXI.WebGLRenderer(768, 768);
 	
 	document.body.appendChild(renderer.view);
